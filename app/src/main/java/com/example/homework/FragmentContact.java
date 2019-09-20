@@ -2,17 +2,16 @@ package com.example.homework;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,21 +24,48 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
+import static android.content.ContentValues.TAG;
+
 public class FragmentContact extends Fragment {
 
     View v;
     private RecyclerView myRecyclerView;
     private List<Contact> lstContact;
+    private RecyclerViewAdapter recyclerViewAdapter;
 
     public FragmentContact() {
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        int i =recyclerViewAdapter.getPosition();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         v = inflater.inflate(R.layout.contact_fragment, container, false);
         myRecyclerView = v.findViewById(R.id.contact_recyclerview);
-        RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(getContext(), lstContact);
+        recyclerViewAdapter = new RecyclerViewAdapter(getContext(), lstContact);
         myRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         myRecyclerView.setAdapter(recyclerViewAdapter);
         return v;
@@ -48,44 +74,60 @@ public class FragmentContact extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Нужен цикл загрузки данных в объект из Content провайдера
-        lstContact = new ArrayList<>();
-        Runnable tusk = new Runnable() {
-            @Override
-            public void run() {
-                getContacts();
-            }
-        };
-        Thread thread = new Thread(tusk);
-        thread.start();
-    }
 
+            lstContact = new ArrayList<>();
+        getContacts();
+    }
 
     private void getContacts() {
+        String name;
+        String Id;
+        long contactId;
         ContentResolver contentResolver = getActivity().getContentResolver();
-        Cursor phones = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-        if (phones != null) {
-            while (phones.moveToNext()) {
-                String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                String Id = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
-                long contactId = phones.getLong(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
+        Cursor curName = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
 
-                InputStream stream = openPhoto(contactId);
-                Bitmap photo = BitmapFactory.decodeStream(stream);
-                String email = getEmail(Id);
-                lstContact.add(new Contact(name, phoneNumber, email, photo));
-
-
+        if (curName != null) {
+            while (curName.moveToNext()) {
+                name = curName.getString(curName.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                Id = curName.getString(curName.getColumnIndex(ContactsContract.Contacts._ID));
+                contactId = curName.getLong(curName.getColumnIndex(ContactsContract.Contacts._ID));
+                getContactObs(name,Id,contactId).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread()).subscribe();
+                Log.i(TAG, "ends");
             }
-            phones.close();
-        } else {
-            Toast.makeText(getActivity(), "Cursor doesnt found", Toast.LENGTH_SHORT).show();
-
+            curName.close();
         }
+
+
     }
 
-    private String getEmail(String Id) {
+    private Observable<List<Contact>> getContactObs(String name,String Id, Long contactId) {
+        return Observable.create(observableEmitter -> {
+            lstContact.add(new Contact(name,getPhoneF(Id),getEmailF(Id),BitmapFactory.decodeStream(openPhoto(contactId))));
+        });
+    }
+
+    private String getPhoneF(String id){
+
+        Cursor pCur = getActivity().getContentResolver().query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                null,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+                        + " = ?", new String[] { id }, null);
+        if (pCur !=null) {
+            if (pCur.moveToNext()) {
+                String phone = pCur
+                        .getString(pCur
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                pCur.close();
+                return phone;
+            }
+            pCur.close();
+        }
+        return null;
+    }
+
+    private String getEmailF(String Id) {
         Cursor emailCur = getActivity().getContentResolver().query(
                 ContactsContract.CommonDataKinds.Email.CONTENT_URI,
                 null,
@@ -98,10 +140,7 @@ public class FragmentContact extends Fragment {
                                 .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
                 emailCur.close();
                 return emailContact;
-
             }
-        }
-        if (emailCur != null) {
             emailCur.close();
         }
         return null;

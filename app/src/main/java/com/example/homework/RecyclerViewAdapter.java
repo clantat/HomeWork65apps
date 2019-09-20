@@ -2,6 +2,7 @@ package com.example.homework;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import static android.content.ContentValues.TAG;
+
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
 
 
     private Context mContext;
     private List<Contact> mData;
     private Dialog myDialog;
+    private int position;
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public int getPosition() {
+        return position;
+    }
 
     public RecyclerViewAdapter(Context mContext, List<Contact> mData) {
         this.mContext = mContext;
@@ -35,20 +47,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         vHolder.item_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                position = vHolder.getAdapterPosition(); //связать с отображением контактов
+                Log.i(TAG, "Position " + position);
+
                 myDialog.setContentView(R.layout.dialog_contact);
                 TextView dialog_name_tv = myDialog.findViewById(R.id.dialog_name_id);
                 TextView dialog_phone_tv = myDialog.findViewById(R.id.dialog_phone_id);
                 TextView dialog_email_tv = myDialog.findViewById(R.id.dialog_email_id);
                 ImageView dialog_image = myDialog.findViewById(R.id.dialog_image);
-                dialog_name_tv.setText(mData.get(vHolder.getAdapterPosition()).getName());
-                dialog_phone_tv.setText(mData.get(vHolder.getAdapterPosition()).getPhone());
-                dialog_email_tv.setText(mData.get(vHolder.getAdapterPosition()).getEmail());
-                dialog_image.setImageBitmap(mData.get(vHolder.getAdapterPosition()).getmBitmap());
+                dialog_name_tv.setText(mData.get(position).getName());
+                dialog_phone_tv.setText(mData.get(position).getPhone());
+                dialog_email_tv.setText(mData.get(position).getEmail());
+                dialog_image.setImageBitmap(mData.get(position).getmBitmap());
                 myDialog.show();
             }
         });
-
-
         return vHolder;
     }
 
