@@ -25,23 +25,14 @@ public class FragmentContactInfo extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            name = savedInstanceState.getString("Name");
-            phone = savedInstanceState.getString("Phone");
-            email = savedInstanceState.getString("Email");
-            bitmap = savedInstanceState.getParcelable("Image");
+        if (getArguments() != null) {
+            name = getArguments().getString("Name");
+            phone = getArguments().getString("Phone");
+            email = getArguments().getString("Email");
+            bitmap = getArguments().getParcelable("Image");
         }
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("Name", name);
-        outState.putString("Phone", phone);
-        outState.putString("Email", email);
-        outState.putParcelable("Image", bitmap);
-
-    }
 
     @Nullable
     @Override
@@ -64,10 +55,14 @@ public class FragmentContactInfo extends Fragment {
         view = null;
     }
 
-    void setInfo(String name, String phone, String email, Bitmap bitmap) {
-        this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.bitmap = bitmap;
+    public static FragmentContactInfo newInstance(String Name, String Phone, String Email, Bitmap Image) {
+        FragmentContactInfo myFragment = new FragmentContactInfo();
+        Bundle bundle = new Bundle();
+        bundle.putString("Name", Name);
+        bundle.putString("Phone", Phone);
+        bundle.putString("Email", Email);
+        bundle.putParcelable("Image", Image);
+        myFragment.setArguments(bundle);
+        return myFragment;
     }
 }

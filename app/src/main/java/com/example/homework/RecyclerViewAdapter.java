@@ -20,7 +20,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private Context mContext;
     private List<Contact> mData;
 
-
     RecyclerViewAdapter(Context mContext, List<Contact> mData) {
         this.mContext = mContext;
         this.mData = mData;
@@ -31,22 +30,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_contact, parent, false);
         final MyViewHolder vHolder = new MyViewHolder(view);
-        FragmentContactInfo fragmentContactInfo = new FragmentContactInfo();
         vHolder.item_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int position = vHolder.getAdapterPosition();
-                fragmentContactInfo.setInfo(
-                        mData.get(position).getName(),
-                        mData.get(position).getPhone(),
-                        mData.get(position).getEmail(),
-                        mData.get(position).getmBitmap());
-                FragmentTransaction fragmentTransaction = ((MainActivity) mContext).getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.container, fragmentContactInfo).addToBackStack(null).commit();
+                ((MainActivity) mContext).getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, FragmentContactInfo.newInstance(
+                                mData.get(position).getName(),
+                                mData.get(position).getPhone(),
+                                mData.get(position).getEmail(),
+                                mData.get(position).getmBitmap()))
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .addToBackStack(null).commit();
             }
         });
         return vHolder;
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {

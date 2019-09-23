@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +25,6 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -35,8 +35,6 @@ public class FragmentContact extends Fragment {
     private ArrayList<Contact> lstContact;
     private RecyclerViewAdapter recyclerViewAdapter;
     private Disposable disposable;
-    private String name;
-    private String Id;
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -72,8 +70,6 @@ public class FragmentContact extends Fragment {
         view = null;
         myRecyclerView = null;
         recyclerViewAdapter = null;
-        Id = null;
-        name = null;
     }
 
     @Override
@@ -87,41 +83,26 @@ public class FragmentContact extends Fragment {
     private void getContacts() {
         disposable = getContactsObs()
                 .subscribeOn(Schedulers.io())
-                .doOnNext(cursor -> Id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID)))
-                .doOnNext(cursor -> name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)))
-                .doOnNext(cursor -> getContactsSingle(name, Id).subscribe(new DisposableSingleObserver<Contact>() {
-                    @Override
-                    public void onSuccess(Contact contact) {
-                        lstContact.add(contact);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                    }
-                }))
+                .map(cursor -> new Pair<>(
+                        cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID))
+                        , cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))))
+                .flatMapSingle(pair -> getContactsSingle(pair.first, pair.second))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+                .subscribe(lstContact::add);
     }
 
+    //TODO переделать obs
     private Observable<Cursor> getContactsObs() {
         return Observable.create(e -> {
             Cursor cursor = getActivity().getContentResolver()
                     .query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-            try {
-                if (cursor != null)
-                    while (cursor.moveToNext()) {
-                        e.onNext(cursor);
-                    }
-            } finally {
-                if (cursor != null) cursor.close();
-            }
+            e.onNext(cursor);
         });
     }
 
     private Single<Contact> getContactsSingle(String name, String Id) {
-        return Single.create(emitter ->
-                emitter.onSuccess(new Contact(name, getPhoneF(Id),
-                        getEmailF(Id), BitmapFactory.decodeStream(openPhoto(Id)))));
+        return Single.fromCallable(() -> new Contact(name, getPhoneF(Id),
+                getEmailF(Id), BitmapFactory.decodeStream(openPhoto(Id))));
     }
 
     private String getPhoneF(String id) {
