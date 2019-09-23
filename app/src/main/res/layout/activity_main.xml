@@ -8,9 +8,10 @@
     android:id="@+id/container"
     android:orientation="horizontal">
     <fragment
-        android:id="@+id/contact_fragment"
-        class="com.example.homework.FragmentContact"
-        tools:layout="@layout/contact_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+            android:id="@+id/contact_fragment"
+            class="com.example.homework.FragmentContact"
+            tools:layout="@layout/contact_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
 </FrameLayout>

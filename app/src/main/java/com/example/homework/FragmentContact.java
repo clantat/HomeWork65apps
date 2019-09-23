@@ -1,6 +1,8 @@
 package com.example.homework;
 
+import android.Manifest;
 import android.content.ContentUris;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -9,9 +11,11 @@ import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -57,9 +62,33 @@ public class FragmentContact extends Fragment {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
             lstContact = new ArrayList<>();
-            getContacts();
+            if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()),
+                    Manifest.permission.READ_CONTACTS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
+                        1);
+            } else {
+                getContacts();
+            }
         } else {
             lstContact = savedInstanceState.getParcelableArrayList("lstContact");
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getContacts();
+                } else {
+                    Toast.makeText(getContext(), "Второго шанса не будет", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
         }
     }
 
@@ -101,7 +130,6 @@ public class FragmentContact extends Fragment {
                 } finally {
                     cursor.close();
                 }
-
         });
     }
 
