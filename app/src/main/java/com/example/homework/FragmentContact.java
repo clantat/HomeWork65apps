@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -83,26 +82,54 @@ public class FragmentContact extends Fragment {
     private void getContacts() {
         disposable = getContactsObs()
                 .subscribeOn(Schedulers.io())
-                .map(cursor -> new Pair<>(
-                        cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID))
-                        , cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))))
-                .flatMapSingle(pair -> getContactsSingle(pair.first, pair.second))
+                .flatMapSingle(this::getContactsSingle)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(lstContact::add);
     }
 
     //TODO переделать obs
-    private Observable<Cursor> getContactsObs() {
+    private Observable<String> getContactsObs() {
         return Observable.create(e -> {
             Cursor cursor = getActivity().getContentResolver()
                     .query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-            e.onNext(cursor);
+            if (cursor != null)
+                try {
+                    while (cursor.moveToNext()) {
+                        e.onNext(cursor.getString(cursor
+                                .getColumnIndex(ContactsContract.Contacts._ID)));
+                    }
+                } finally {
+                    cursor.close();
+                }
+
         });
     }
 
-    private Single<Contact> getContactsSingle(String name, String Id) {
-        return Single.fromCallable(() -> new Contact(name, getPhoneF(Id),
+    private Single<Contact> getContactsSingle(String Id) {
+        return Single.fromCallable(() -> new Contact(getNameF(Id), getPhoneF(Id),
                 getEmailF(Id), BitmapFactory.decodeStream(openPhoto(Id))));
+    }
+
+    private String getNameF(String id) {
+        Cursor cursor = getActivity().getContentResolver().query(
+                ContactsContract.Contacts.CONTENT_URI,
+                null,
+                ContactsContract.Contacts._ID
+                        + " = ?", new String[]{id}, null);
+        if (cursor == null) {
+            return null;
+        }
+        try {
+            if (cursor.moveToNext()) {
+
+                return cursor
+                        .getString(cursor
+                                .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            }
+        } finally {
+            cursor.close();
+        }
+        return null;
     }
 
     private String getPhoneF(String id) {
