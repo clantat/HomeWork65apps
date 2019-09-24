@@ -10,7 +10,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (findViewById(R.id.container) != null) {
-
             if (savedInstanceState != null) {
                 return;
             }
@@ -19,7 +18,6 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, firstFragment).commit();
         }
-
     }
 
 }
