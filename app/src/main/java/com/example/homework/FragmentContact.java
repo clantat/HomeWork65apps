@@ -28,7 +28,7 @@ import java.util.Objects;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -38,6 +38,7 @@ public class FragmentContact extends Fragment {
     private RecyclerView myRecyclerView;
     private ArrayList<Contact> lstContact;
     private RecyclerViewAdapter recyclerViewAdapter;
+    private Disposable disposable;
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -100,28 +101,22 @@ public class FragmentContact extends Fragment {
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (disposable != null) {
+            disposable.dispose();
+        }
+    }
+
     private void getContacts() {
-        // возвращает void при DisposableObserver, правильно ли будет отписываться в onComplete?
-        getContactsObs()
+        disposable = getContactsObs()
                 .subscribeOn(Schedulers.io())
                 .flatMapSingle(this::getContactsSingle)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<Contact>() {
-                    @Override
-                    public void onNext(Contact contact) {
-                        lstContact.add(contact);
-                        recyclerViewAdapter.notifyItemInserted(lstContact.indexOf(contact));
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        dispose();
-                    }
+                .subscribe(item -> {
+                    lstContact.add(item);
+                    recyclerViewAdapter.notifyItemInserted(lstContact.indexOf(item));
                 });
     }
 
@@ -138,7 +133,6 @@ public class FragmentContact extends Fragment {
                 } finally {
                     cursor.close();
                 }
-            e.onComplete();
         });
     }
 
