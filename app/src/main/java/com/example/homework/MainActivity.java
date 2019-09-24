@@ -9,6 +9,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (findViewById(R.id.container) != null) {
+
+            if (savedInstanceState != null) {
+                return;
+            }
+            FragmentContact firstFragment = new FragmentContact();
+            firstFragment.setArguments(getIntent().getExtras());
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, firstFragment).commit();
+        }
+
     }
 
 }
