@@ -98,7 +98,6 @@ public class FragmentContact extends Fragment {
         view = null;
         myRecyclerView = null;
         recyclerViewAdapter = null;
-
     }
 
     @Override
