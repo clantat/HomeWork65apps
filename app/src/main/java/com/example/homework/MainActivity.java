@@ -13,11 +13,13 @@ public class MainActivity extends AppCompatActivity {
 
             if (savedInstanceState != null) {
                 return;
+
             }
-            FragmentContact firstFragment = new FragmentContact();
-            firstFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, firstFragment).commit();
+            //TODO связать с фрагментом
+            FragmentContacts firstFragment = new FragmentContacts();
+//            firstFragment.setArguments(getIntent().getExtras());
+//            getSupportFragmentManager().beginTransaction()
+//                    .add(R.id.container, firstFragment).commit();
         }
 
     }

@@ -17,24 +17,22 @@ import java.util.List;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
 
 
-    private Context mContext;
     private List<Contact> mData;
 
-    RecyclerViewAdapter(Context mContext, List<Contact> mData) {
-        this.mContext = mContext;
+    RecyclerViewAdapter(List<Contact> mData) {
         this.mData = mData;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_contact, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contact, parent, false);
         final MyViewHolder vHolder = new MyViewHolder(view);
         vHolder.item_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int position = vHolder.getAdapterPosition();
-                ((MainActivity) mContext).getSupportFragmentManager()
+                ((MainActivity) parent.getContext()).getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.container, FragmentContactInfo.newInstance(
                                 mData.get(position).getName(),
