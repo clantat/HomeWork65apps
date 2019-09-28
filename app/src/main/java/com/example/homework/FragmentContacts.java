@@ -2,6 +2,7 @@ package com.example.homework;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,8 @@ import io.reactivex.schedulers.Schedulers;
 import presenters.ContactsPresenter;
 import views.ContactsView;
 
+import static android.content.ContentValues.TAG;
+
 
 public class FragmentContacts extends MvpFragment implements ContactsView {
     @InjectPresenter
@@ -56,8 +60,8 @@ public class FragmentContacts extends MvpFragment implements ContactsView {
 
 
     public FragmentContacts() {
-        super();
     }
+
 
 
     @Nullable
@@ -65,15 +69,18 @@ public class FragmentContacts extends MvpFragment implements ContactsView {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.contact_fragment, container, false);
         myRecyclerView = view.findViewById(R.id.contact_recyclerview);
-        if (container != null) {
-            myRecyclerView.setLayoutManager(new LinearLayoutManager(container.getContext()));
-        }
+        myRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         myRecyclerView.setAdapter(recyclerViewAdapter);
         return view;
 
     }
 
-
+//    public static FragmentContactInfo newInstance() {
+//        FragmentContacts myFragment = new FragmentContacts();
+//        Bundle bundle = new Bundle();
+//        myFragment.setArguments(bundle);
+//        return myFragment;
+//    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,9 +88,10 @@ public class FragmentContacts extends MvpFragment implements ContactsView {
     }
 
     @Override
-    public void setContacts(ArrayList<Contact> lstContact) {
+    public void setContacts(ContactsProvider contactsProvider) {
+        contactsProvider = new ContactsProvider(getActivity().getContentResolver());
+        recyclerViewAdapter = new RecyclerViewAdapter(getActivity(),contactsProvider.getContacts());
 
-        recyclerViewAdapter = new RecyclerViewAdapter(lstContact);
     //    recyclerViewAdapter.notifyDataSetChanged();
 
     }

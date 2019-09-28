@@ -3,8 +3,12 @@ package com.example.homework;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import android.app.Fragment;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "f";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -13,13 +17,13 @@ public class MainActivity extends AppCompatActivity {
 
             if (savedInstanceState != null) {
                 return;
-
             }
             //TODO связать с фрагментом
-            FragmentContacts firstFragment = new FragmentContacts();
-//            firstFragment.setArguments(getIntent().getExtras());
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.container, firstFragment).commit();
+            Log.i(TAG, "getContacts: Activity");
+            Fragment firstFragment = new FragmentContacts();
+            firstFragment.setArguments(getIntent().getExtras());
+            getFragmentManager().beginTransaction()
+                    .add(R.id.container, firstFragment).commit();
         }
 
     }

@@ -1,11 +1,13 @@
 package com.example.homework;
 
+import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -17,10 +19,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.content.ContentValues.TAG;
+
 public class ContactsProvider {
     private ArrayList<Contact> lstContact;
-    private Disposable disposable;
     private ContentResolver contentResolver;
+    private Disposable disposable;
 
     public ContactsProvider() {
     }
@@ -37,6 +41,7 @@ public class ContactsProvider {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(item -> {
                     lstContact.add(item);
+                    Log.i(TAG, "getContacts:" + lstContact.get(0).getName());
                 });
         return lstContact;
     }
@@ -44,6 +49,11 @@ public class ContactsProvider {
     public void unsubscribe() {
         disposable.dispose();
     }
+
+//    public static ContactsProvider newInstance(ContentResolver contentResolver) {
+//        return new ContactsProvider(contentResolver);
+//
+//    }
 
 
     private Observable<String> getContactsObs() {

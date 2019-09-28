@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
@@ -23,20 +24,20 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import views.ContactsView;
 
+import static android.content.ContentValues.TAG;
+
 @InjectViewState
 public class ContactsPresenter extends MvpPresenter<ContactsView> {
     private ContactsProvider contactsProvider;
-    public void getContacts() {
-        getViewState().setContacts(contactsProvider.getContacts());
 
+    public void getContacts() {
+        Log.i(TAG, "getContacts: Presenter");
+        getViewState().setContacts(contactsProvider);
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         contactsProvider.unsubscribe();
+        super.onDestroy();
     }
-
-    //TODO вынести ContentResolver отдельно
-
 }

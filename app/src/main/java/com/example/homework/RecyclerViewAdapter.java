@@ -16,10 +16,11 @@ import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
 
-
+    private Context mContext;
     private List<Contact> mData;
 
-    RecyclerViewAdapter(List<Contact> mData) {
+    RecyclerViewAdapter(Context mContext,List<Contact> mData) {
+        this.mContext = mContext;
         this.mData = mData;
     }
 
@@ -32,7 +33,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View view) {
                 int position = vHolder.getAdapterPosition();
-                ((MainActivity) parent.getContext()).getSupportFragmentManager()
+                ((MainActivity) mContext).getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.container, FragmentContactInfo.newInstance(
                                 mData.get(position).getName(),
