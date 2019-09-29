@@ -19,9 +19,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private Context mContext;
     private List<Contact> mData;
 
-    RecyclerViewAdapter(Context mContext,List<Contact> mData) {
+    RecyclerViewAdapter(Context mContext, List<Contact> mData) {
         this.mContext = mContext;
         this.mData = mData;
+
     }
 
     @NonNull
@@ -32,6 +33,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         vHolder.item_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 int position = vHolder.getAdapterPosition();
                 ((MainActivity) mContext).getSupportFragmentManager()
                         .beginTransaction()
