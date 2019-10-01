@@ -11,5 +11,4 @@ public interface ContactsView extends MvpView {
     @StateStrategyType(OneExecutionStateStrategy.class)
     void onRequestPermission();
     void setContacts(List<Contact> list);
-
 }

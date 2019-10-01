@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -15,8 +14,6 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
-
-import static android.content.ContentValues.TAG;
 //TODO раскидать методы в разные интерфейсы
 
 public class ContactsProvider {
@@ -30,7 +27,6 @@ public class ContactsProvider {
     }
 
     public Single<List<Contact>> getContacts() {
-        Log.i(TAG, "getContacts: getContacts in ContactsProvider");
         return getContactsObs()
                 .subscribeOn(Schedulers.io())
                 .flatMapSingle(this::getContactsSingle)
@@ -50,6 +46,7 @@ public class ContactsProvider {
                 } finally {
                     cursor.close();
                 }
+            e.onComplete();
         });
     }
 
@@ -69,11 +66,9 @@ public class ContactsProvider {
         }
         try {
             if (cursor.moveToNext()) {
-                String curName = cursor
+                return cursor
                         .getString(cursor
                                 .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                Log.i(TAG, "getContacts: curName: " + curName);
-                return curName;
             }
         } finally {
             cursor.close();
