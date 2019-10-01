@@ -16,11 +16,11 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.arellomobile.mvp.MvpFragment;
+import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import presenters.ContactsPresenter;
@@ -29,25 +29,16 @@ import views.ContactsView;
 import static android.content.ContentValues.TAG;
 
 
-public class FragmentContacts extends MvpFragment implements ContactsView {
+public class FragmentContacts extends MvpAppCompatFragment implements ContactsView {
     @InjectPresenter
-
     ContactsPresenter contactsPresenter;
 
     private View view;
     private RecyclerView myRecyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
 
-//    @Override
-//    public void onSaveInstanceState(@NonNull Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        outState.putParcelableArrayList("lstContact", lstContact);
-//    }
-
-
     public FragmentContacts() {
     }
-
 
     @Nullable
     @Override
@@ -58,21 +49,7 @@ public class FragmentContacts extends MvpFragment implements ContactsView {
         myRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         myRecyclerView.setAdapter(recyclerViewAdapter);
         return view;
-
     }
-
-//    public static FragmentContactInfo newInstance() {
-//        FragmentContacts myFragment = new FragmentContacts();
-//        Bundle bundle = new Bundle();
-//        myFragment.setArguments(bundle);
-//        return myFragment;
-//    }
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        contactsPresenter.getContacts();
-//
-//    }
 
     @ProvidePresenter
     ContactsPresenter provideContactsPresenter() {
@@ -81,31 +58,26 @@ public class FragmentContacts extends MvpFragment implements ContactsView {
     }
 
     @Override
-    public void setContacts(ArrayList<Contact> arrayList) {
-        Log.i(TAG, "getContacts: setContacts");
-        recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), arrayList);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
-            if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()),
-                    Manifest.permission.READ_CONTACTS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
-                            1);
-                }
-            } else {
-                Log.i(TAG, "getContacts: oncreate");
-                contactsPresenter.getContacts();
+    public void onRequestPermission() {
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()),
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
+                        1);
             }
         } else {
-            //TODO взять инфу из state
+            Log.i(TAG, "getContacts: onRequestPermission");
+            recyclerViewAdapter = new RecyclerViewAdapter();
+            contactsPresenter.getContacts();
         }
     }
 
+    @Override
+    public void setContacts(List<Contact> list) {
+        Log.i(TAG, "getContacts: setContacts");
+        recyclerViewAdapter.setData(list);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -115,6 +87,7 @@ public class FragmentContacts extends MvpFragment implements ContactsView {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     contactsPresenter.getContacts();
+                    recyclerViewAdapter = new RecyclerViewAdapter();
                 } else {
                     Toast.makeText(getActivity(), "Второго шанса не будет", Toast.LENGTH_LONG).show();
                 }

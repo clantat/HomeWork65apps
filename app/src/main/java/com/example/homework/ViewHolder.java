@@ -1,6 +1,5 @@
 package com.example.homework;
 
-import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -9,14 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.arellomobile.mvp.presenter.InjectPresenter;
-
-import presenters.ViewHolderPresenter;
-import views.ViewHolderView;
-
-public class ViewHolder extends RecyclerView.ViewHolder implements ViewHolderView {
-    @InjectPresenter
-    ViewHolderPresenter viewHolderPresenter;
+public class ViewHolder extends RecyclerView.ViewHolder {
     private LinearLayout item_contact;
     private TextView tv_name;
     private TextView tv_phone;
@@ -30,18 +22,18 @@ public class ViewHolder extends RecyclerView.ViewHolder implements ViewHolderVie
         img = itemView.findViewById(R.id.img_contact);
     }
 
-    @Override
-    public void setName(String name) {
-        tv_name.setText(name);
+    void onBind(Contact contact) {
+        tv_name.setText(contact.getName());
+        tv_phone.setText(contact.getPhone());
+        img.setImageBitmap(contact.getmBitmap());
     }
 
-    @Override
-    public void setPhone(String phone) {
-        tv_phone.setText(phone);
+    public LinearLayout getItem_contact() {
+        return item_contact;
     }
 
-    @Override
-    public void setImage(Bitmap bitmap) {
-        img.setImageBitmap(bitmap);
+    public void setItem_contact(LinearLayout item_contact) {
+        this.item_contact = item_contact;
     }
+
 }

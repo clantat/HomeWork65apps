@@ -1,6 +1,5 @@
 package com.example.homework;
 
-import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.database.Cursor;
@@ -11,20 +10,17 @@ import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.content.ContentValues.TAG;
+//TODO раскидать методы в разные интерфейсы
 
 public class ContactsProvider {
-    private ArrayList<Contact> lstContact;
     private ContentResolver contentResolver;
-    private Disposable disposable;
 
     public ContactsProvider() {
     }
@@ -33,28 +29,13 @@ public class ContactsProvider {
         this.contentResolver = contentResolver;
     }
 
-    public ArrayList<Contact> getContacts() {
-        lstContact = new ArrayList<>();
-        disposable = getContactsObs()
+    public Single<List<Contact>> getContacts() {
+        Log.i(TAG, "getContacts: getContacts in ContactsProvider");
+        return getContactsObs()
                 .subscribeOn(Schedulers.io())
                 .flatMapSingle(this::getContactsSingle)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(item -> {
-                    lstContact.add(item);
-                    Log.i(TAG, "getContacts:" + lstContact.get(0).getName());
-                });
-        return lstContact;
+                .toList();
     }
-
-    public void unsubscribe() {
-        disposable.dispose();
-    }
-
-//    public static ContactsProvider newInstance(ContentResolver contentResolver) {
-//        return new ContactsProvider(contentResolver);
-//
-//    }
-
 
     private Observable<String> getContactsObs() {
         return Observable.create(e -> {
@@ -88,10 +69,11 @@ public class ContactsProvider {
         }
         try {
             if (cursor.moveToNext()) {
-
-                return cursor
+                String curName = cursor
                         .getString(cursor
                                 .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                Log.i(TAG, "getContacts: curName: " + curName);
+                return curName;
             }
         } finally {
             cursor.close();

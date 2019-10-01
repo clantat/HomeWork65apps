@@ -1,12 +1,16 @@
 package views;
 
 import com.arellomobile.mvp.MvpView;
+import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
+import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.example.homework.Contact;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface ContactsView extends MvpView {
-
-    void setContacts(ArrayList<Contact> arrayList);
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void onRequestPermission();
+    void setContacts(List<Contact> list);
 
 }

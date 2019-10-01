@@ -1,9 +1,9 @@
 package com.example.homework;
 
-import android.app.Fragment;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "f";
@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
             }
             Fragment firstFragment = new FragmentContacts();
             firstFragment.setArguments(getIntent().getExtras());
-            getFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, firstFragment).commit();
         }
 
