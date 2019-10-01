@@ -19,7 +19,6 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
 
     public ContactsPresenter(ContactsProvider contactsProvider) {
         this.contactsProvider = contactsProvider;
-
     }
 
     @Override
@@ -36,6 +35,7 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
                     Log.i(TAG, "getContacts: ViewState().setContacts()");
                     getViewState().setContacts(item);
                 });
+
         Log.i(TAG, "getContacts: after disposable");
     }
 

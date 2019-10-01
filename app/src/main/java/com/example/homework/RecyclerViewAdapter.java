@@ -63,8 +63,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     }
 
     public void setData(List<Contact> data) {
-        mData = data;
         Log.i(TAG, "getContacts: adapter setData");
+        mData = data;
         notifyDataSetChanged();
     }
 }

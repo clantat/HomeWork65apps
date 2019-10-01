@@ -68,7 +68,6 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
             }
         } else {
             Log.i(TAG, "getContacts: onRequestPermission");
-            recyclerViewAdapter = new RecyclerViewAdapter();
             contactsPresenter.getContacts();
         }
     }
@@ -76,6 +75,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     @Override
     public void setContacts(List<Contact> list) {
         Log.i(TAG, "getContacts: setContacts");
+        recyclerViewAdapter = new RecyclerViewAdapter();
         recyclerViewAdapter.setData(list);
     }
 
@@ -87,7 +87,6 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     contactsPresenter.getContacts();
-                    recyclerViewAdapter = new RecyclerViewAdapter();
                 } else {
                     Toast.makeText(getActivity(), "Второго шанса не будет", Toast.LENGTH_LONG).show();
                 }
