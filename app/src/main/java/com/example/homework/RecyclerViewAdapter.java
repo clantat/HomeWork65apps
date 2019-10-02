@@ -18,20 +18,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     private List<Contact> mData;
 
     public RecyclerViewAdapter() {
+        Log.i(TAG, "getContacts: adapter constructor");
     }
 
     RecyclerViewAdapter(List<Contact> mData) {
         this.mData = mData;
         Log.i(TAG, "getContacts: RecyclerViewAdapter: ");
-
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contact, parent, false);
-        final ViewHolder vHolder = new ViewHolder(view);
         Log.i(TAG, "getContacts: onCreateViewHolder ");
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contact, parent, false);
+        ViewHolder vHolder = new ViewHolder(view);
         vHolder.getItem_contact().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,8 +63,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     }
 
     public void setData(List<Contact> data) {
-        Log.i(TAG, "getContacts: adapter setData");
         mData = data;
         notifyDataSetChanged();
+        for (int i = 0; i <mData.size(); i++) {
+            Log.i(TAG, "getContacts: adapter setData: name"+mData.get(i).getName() );
+        }
     }
 }

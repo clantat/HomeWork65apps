@@ -43,16 +43,16 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         view = inflater.inflate(R.layout.contact_fragment, container, false);
         myRecyclerView = view.findViewById(R.id.contact_recyclerview);
         myRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        myRecyclerView.setAdapter(recyclerViewAdapter);
+        Log.i(TAG, "getContacts: setAdapter");
         return view;
     }
 
     @ProvidePresenter
     ContactsPresenter provideContactsPresenter() {
+        Log.i(TAG, "getContacts:.");
         Log.i(TAG, "getContacts: providePresenter");
         return new ContactsPresenter(new ContactsProvider(getActivity().getContentResolver()));
     }
@@ -77,6 +77,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
         Log.i(TAG, "getContacts: setContacts");
         recyclerViewAdapter = new RecyclerViewAdapter();
         recyclerViewAdapter.setData(list);
+        myRecyclerView.setAdapter(recyclerViewAdapter);
     }
 
     @Override

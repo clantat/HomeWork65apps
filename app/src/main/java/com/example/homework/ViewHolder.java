@@ -1,5 +1,6 @@
 package com.example.homework;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -7,6 +8,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static android.content.ContentValues.TAG;
 
 public class ViewHolder extends RecyclerView.ViewHolder {
     private LinearLayout item_contact;
