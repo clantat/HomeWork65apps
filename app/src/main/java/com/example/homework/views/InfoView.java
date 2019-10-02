@@ -1,4 +1,4 @@
-package views;
+package com.example.homework.views;
 
 import android.graphics.Bitmap;
 

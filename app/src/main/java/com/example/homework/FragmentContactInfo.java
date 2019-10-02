@@ -14,14 +14,14 @@ import androidx.annotation.Nullable;
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
-
-import presenters.InfoPresenter;
-import views.InfoView;
+import com.example.homework.presenters.InfoPresenter;
+import com.example.homework.views.InfoView;
 
 public class FragmentContactInfo extends MvpAppCompatFragment implements InfoView {
     @InjectPresenter
     InfoPresenter infoPresenter;
 
+    private String id;
     private View view;
     private TextView nameView;
     private TextView phoneView;
@@ -31,6 +31,9 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
     public FragmentContactInfo() {
     }
 
+    public FragmentContactInfo(String id) {
+        this.id = id;
+    }
 
     @Nullable
     @Override
@@ -46,6 +49,7 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        id = null;
         view = null;
         nameView = null;
         phoneView = null;
@@ -55,13 +59,11 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
 
     @ProvidePresenter
     InfoPresenter provideInfoPresenter() {
-        return infoPresenter;
+        return new InfoPresenter(id, new ContactsProvider(getActivity().getContentResolver()));
     }
 
-    public static FragmentContactInfo newInstance(String Name, String Phone, String Email, Bitmap Image) {
-        FragmentContactInfo myFragment = new FragmentContactInfo();
-        myFragment.infoPresenter = new InfoPresenter(Name, Phone, Email, Image);
-        return myFragment;
+    public static FragmentContactInfo newInstance(String id) {
+        return new FragmentContactInfo(id);
     }
 
     @Override

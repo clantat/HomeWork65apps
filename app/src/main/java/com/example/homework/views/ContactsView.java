@@ -1,4 +1,4 @@
-package views;
+package com.example.homework.views;
 
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;

@@ -4,38 +4,21 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Contact implements Parcelable {
+public class Contact {
+    private String Id;
     private String Name;
     private String Phone;
     private String Email;
     private Bitmap mBitmap;
 
 
-    public Contact(String name, String phone, String email, Bitmap bitmap) {
+    public Contact(String id ,String name, String phone, String email, Bitmap bitmap) {
+        Id = id;
         Name = name;
         Phone = phone;
         Email = email;
         mBitmap = bitmap;
     }
-
-    protected Contact(Parcel in) {
-        Name = in.readString();
-        Phone = in.readString();
-        Email = in.readString();
-        mBitmap = in.readParcelable(Bitmap.class.getClassLoader());
-    }
-
-    public static final Creator<Contact> CREATOR = new Creator<Contact>() {
-        @Override
-        public Contact createFromParcel(Parcel in) {
-            return new Contact(in);
-        }
-
-        @Override
-        public Contact[] newArray(int size) {
-            return new Contact[size];
-        }
-    };
 
     //Getter
     public Bitmap getmBitmap() {
@@ -44,6 +27,10 @@ public class Contact implements Parcelable {
 
     public String getName() {
         return Name;
+    }
+
+    public String getId() {
+        return Id;
     }
 
     public String getPhone() {
@@ -74,17 +61,7 @@ public class Contact implements Parcelable {
         Email = email;
     }
 
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(Name);
-        parcel.writeString(Phone);
-        parcel.writeString(Email);
-        parcel.writeParcelable(mBitmap, i);
+    public void setId(String id) {
+        Id = id;
     }
 }

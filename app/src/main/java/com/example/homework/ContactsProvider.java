@@ -14,7 +14,6 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
-//TODO раскидать методы в разные интерфейсы
 
 public class ContactsProvider {
     private ContentResolver contentResolver;
@@ -29,8 +28,13 @@ public class ContactsProvider {
     public Single<List<Contact>> getContacts() {
         return getContactsObs()
                 .subscribeOn(Schedulers.io())
-                .flatMapSingle(this::getContactsSingle)
+                .flatMapSingle(this::getContactSingle)
                 .toList();
+    }
+
+    public Single<Contact> getContactSingle(String Id) {
+        return Single.fromCallable(() -> new Contact(Id,getNameF(Id), getPhoneF(Id),
+                getEmailF(Id), BitmapFactory.decodeStream(openPhoto(Id))));
     }
 
     private Observable<String> getContactsObs() {
@@ -48,11 +52,6 @@ public class ContactsProvider {
                 }
             e.onComplete();
         });
-    }
-
-    private Single<Contact> getContactsSingle(String Id) {
-        return Single.fromCallable(() -> new Contact(getNameF(Id), getPhoneF(Id),
-                getEmailF(Id), BitmapFactory.decodeStream(openPhoto(Id))));
     }
 
     private String getNameF(String id) {

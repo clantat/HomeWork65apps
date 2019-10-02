@@ -35,14 +35,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
         vHolder.getItem_contact().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int position = vHolder.getAdapterPosition();
                 ((MainActivity) parent.getContext()).getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.container, FragmentContactInfo.newInstance(
-                                mData.get(position).getName(),
-                                mData.get(position).getPhone(),
-                                mData.get(position).getEmail(),
-                                mData.get(position).getmBitmap()))
+                                mData.get(vHolder.getAdapterPosition()).getId()))
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .addToBackStack(null).commit();
             }

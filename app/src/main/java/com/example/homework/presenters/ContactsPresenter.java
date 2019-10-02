@@ -1,4 +1,4 @@
-package presenters;
+package com.example.homework.presenters;
 
 import android.util.Log;
 
@@ -8,7 +8,7 @@ import com.example.homework.ContactsProvider;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import views.ContactsView;
+import com.example.homework.views.ContactsView;
 
 import static android.content.ContentValues.TAG;
 

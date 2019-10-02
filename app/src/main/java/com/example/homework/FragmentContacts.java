@@ -23,8 +23,8 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import java.util.List;
 import java.util.Objects;
 
-import presenters.ContactsPresenter;
-import views.ContactsView;
+import com.example.homework.presenters.ContactsPresenter;
+import com.example.homework.views.ContactsView;
 
 import static android.content.ContentValues.TAG;
 
