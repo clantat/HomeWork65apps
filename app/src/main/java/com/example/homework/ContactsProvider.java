@@ -25,16 +25,20 @@ public class ContactsProvider {
         this.contentResolver = contentResolver;
     }
 
-    public Single<List<Contact>> getContacts() {
+    public Single<List<ShortContact>> getContacts() {
         return getContactsObs()
                 .subscribeOn(Schedulers.io())
-                .flatMapSingle(this::getContactSingle)
+                .flatMapSingle(this::getShortContact)
                 .toList();
     }
 
     public Single<Contact> getContactSingle(String Id) {
-        return Single.fromCallable(() -> new Contact(Id,getNameF(Id), getPhoneF(Id),
+        return Single.fromCallable(() -> new Contact(Id, getNameF(Id), getPhoneF(Id),
                 getEmailF(Id), BitmapFactory.decodeStream(openPhoto(Id))));
+    }
+
+    private Single<ShortContact> getShortContact(String Id) {
+        return Single.fromCallable(() -> new ShortContact(Id, getNameF(Id), getPhoneF(Id)));
     }
 
     private Observable<String> getContactsObs() {

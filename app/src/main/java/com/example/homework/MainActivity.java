@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "f";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

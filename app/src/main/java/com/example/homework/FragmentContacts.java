@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
-
-import java.util.List;
-import java.util.Objects;
-
 import com.example.homework.presenters.ContactsPresenter;
 import com.example.homework.views.ContactsView;
 
-import static android.content.ContentValues.TAG;
+import java.util.List;
+import java.util.Objects;
 
 
 public class FragmentContacts extends MvpAppCompatFragment implements ContactsView {
@@ -46,14 +42,11 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
         view = inflater.inflate(R.layout.contact_fragment, container, false);
         myRecyclerView = view.findViewById(R.id.contact_recyclerview);
         myRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        Log.i(TAG, "getContacts: setAdapter");
         return view;
     }
 
     @ProvidePresenter
     ContactsPresenter provideContactsPresenter() {
-        Log.i(TAG, "getContacts:.");
-        Log.i(TAG, "getContacts: providePresenter");
         return new ContactsPresenter(new ContactsProvider(getActivity().getContentResolver()));
     }
 
@@ -67,14 +60,12 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
                         1);
             }
         } else {
-            Log.i(TAG, "getContacts: onRequestPermission");
             contactsPresenter.getContacts();
         }
     }
 
     @Override
-    public void setContacts(List<Contact> list) {
-        Log.i(TAG, "getContacts: setContacts");
+    public void setContacts(List<ShortContact> list) {
         recyclerViewAdapter = new RecyclerViewAdapter();
         recyclerViewAdapter.setData(list);
         myRecyclerView.setAdapter(recyclerViewAdapter);

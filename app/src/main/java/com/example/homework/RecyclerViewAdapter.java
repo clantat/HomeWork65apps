@@ -1,6 +1,5 @@
 package com.example.homework;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,25 +10,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import static android.content.ContentValues.TAG;
-
 public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
-    private List<Contact> mData;
+    private List<ShortContact> mData;
 
     public RecyclerViewAdapter() {
-        Log.i(TAG, "getContacts: adapter constructor");
-    }
-
-    RecyclerViewAdapter(List<Contact> mData) {
-        this.mData = mData;
-        Log.i(TAG, "getContacts: RecyclerViewAdapter: ");
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.i(TAG, "getContacts: onCreateViewHolder ");
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contact, parent, false);
         final ViewHolder vHolder = new ViewHolder(view);
         vHolder.getItem_contact().setOnClickListener(new View.OnClickListener() {
@@ -48,7 +38,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Log.i(TAG, "getContacts: onBindViewHolder ");
         holder.onBind(mData.get(position));
     }
 
@@ -58,11 +47,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
         return mData.size();
     }
 
-    public void setData(List<Contact> data) {
+    public void setData(List<ShortContact> data) {
         mData = data;
         notifyDataSetChanged();
-        for (int i = 0; i < mData.size(); i++) {
-            Log.i(TAG, "getContacts: adapter setData: name" + mData.get(i).getName());
-        }
     }
 }

@@ -1,8 +1,6 @@
 package com.example.homework;
 
 import android.graphics.Bitmap;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 public class Contact {
     private String Id;
@@ -12,7 +10,7 @@ public class Contact {
     private Bitmap mBitmap;
 
 
-    public Contact(String id ,String name, String phone, String email, Bitmap bitmap) {
+    public Contact(String id, String name, String phone, String email, Bitmap bitmap) {
         Id = id;
         Name = name;
         Phone = phone;

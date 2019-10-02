@@ -21,7 +21,6 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
     @InjectPresenter
     InfoPresenter infoPresenter;
 
-    private String id;
     private View view;
     private TextView nameView;
     private TextView phoneView;
@@ -29,10 +28,6 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
     private ImageView imageView;
 
     public FragmentContactInfo() {
-    }
-
-    public FragmentContactInfo(String id) {
-        this.id = id;
     }
 
     @Nullable
@@ -49,7 +44,6 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        id = null;
         view = null;
         nameView = null;
         phoneView = null;
@@ -59,18 +53,24 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
 
     @ProvidePresenter
     InfoPresenter provideInfoPresenter() {
+        String id=null;
+        if(getArguments()!=null) id=getArguments().getString("id");
         return new InfoPresenter(id, new ContactsProvider(getActivity().getContentResolver()));
     }
 
     public static FragmentContactInfo newInstance(String id) {
-        return new FragmentContactInfo(id);
+        FragmentContactInfo myFragment = new FragmentContactInfo();
+        Bundle bundle = new Bundle();
+        bundle.putString("id", id);
+        myFragment.setArguments(bundle);
+        return myFragment;
     }
 
     @Override
-    public void showInfo(String name, String phone, String email, Bitmap bitmap) {
-        nameView.setText(name);
-        phoneView.setText(phone);
-        emailView.setText(email);
-        imageView.setImageBitmap(bitmap);
+    public void showInfo(Contact contact) {
+        nameView.setText(contact.getName());
+        phoneView.setText(contact.getPhone());
+        emailView.setText(contact.getEmail());
+        imageView.setImageBitmap(contact.getmBitmap());
     }
 }

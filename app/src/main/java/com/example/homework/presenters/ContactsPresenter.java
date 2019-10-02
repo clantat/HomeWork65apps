@@ -1,16 +1,12 @@
 package com.example.homework.presenters;
 
-import android.util.Log;
-
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.example.homework.ContactsProvider;
+import com.example.homework.views.ContactsView;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import com.example.homework.views.ContactsView;
-
-import static android.content.ContentValues.TAG;
 
 @InjectViewState
 public class ContactsPresenter extends MvpPresenter<ContactsView> {
@@ -28,16 +24,9 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
     }
 
     public void getContacts() {
-        Log.i(TAG, "getContacts: before disposable");
         disposable = contactsProvider.getContacts()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(item -> {
-                    for (int i = 0; i < item.size(); i++) {
-                        Log.i(TAG, "getContacts: ViewState().setContacts(): item name: " + item.get(i).getName());
-                    }
-                    getViewState().setContacts(item);
-                });
-        Log.i(TAG, "getContacts: after disposable");
+                .subscribe(item -> getViewState().setContacts(item));
     }
 
     @Override
