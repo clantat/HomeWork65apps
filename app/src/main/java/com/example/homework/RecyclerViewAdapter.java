@@ -31,7 +31,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.i(TAG, "getContacts: onCreateViewHolder ");
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contact, parent, false);
-        ViewHolder vHolder = new ViewHolder(view);
+        final ViewHolder vHolder = new ViewHolder(view);
         vHolder.getItem_contact().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,8 +65,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     public void setData(List<Contact> data) {
         mData = data;
         notifyDataSetChanged();
-        for (int i = 0; i <mData.size(); i++) {
-            Log.i(TAG, "getContacts: adapter setData: name"+mData.get(i).getName() );
+        for (int i = 0; i < mData.size(); i++) {
+            Log.i(TAG, "getContacts: adapter setData: name" + mData.get(i).getName());
         }
     }
 }

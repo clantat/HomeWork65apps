@@ -32,7 +32,7 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
         disposable = contactsProvider.getContacts()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(item -> {
-                    for (int i = 0; i <item.size() ; i++) {
+                    for (int i = 0; i < item.size(); i++) {
                         Log.i(TAG, "getContacts: ViewState().setContacts(): item name: " + item.get(i).getName());
                     }
                     getViewState().setContacts(item);
