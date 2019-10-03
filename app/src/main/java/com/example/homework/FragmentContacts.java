@@ -1,8 +1,5 @@
 package com.example.homework;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +8,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,7 +18,6 @@ import com.example.homework.presenters.ContactsPresenter;
 import com.example.homework.views.ContactsView;
 
 import java.util.List;
-import java.util.Objects;
 
 
 public class FragmentContacts extends MvpAppCompatFragment implements ContactsView {
@@ -51,15 +46,8 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     }
 
     @Override
-    public void onRequestPermission() {
-        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()),
-                Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
-                        1);
-            }
-        } else {
+    public void onRequestPermission(RequestPermissionFragment requestPermissionFragment) {
+        if (requestPermissionFragment.doRequestPermission(this)) {
             contactsPresenter.getContacts();
         }
     }
@@ -74,17 +62,10 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 1: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    contactsPresenter.getContacts();
-                } else {
-                    Toast.makeText(getActivity(), "Второго шанса не будет", Toast.LENGTH_LONG).show();
-                }
-                return;
-            }
-        }
+        if (RequestReadContact.onRequestPermissionResult(requestCode, grantResults))
+            contactsPresenter.getContacts();
+        else
+            Toast.makeText(getActivity(), "Второго шанса не будет", Toast.LENGTH_LONG).show();
     }
 
     @Override

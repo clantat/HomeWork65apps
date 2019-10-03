@@ -3,6 +3,7 @@ package com.example.homework.presenters;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.example.homework.ContactsProvider;
+import com.example.homework.RequestReadContact;
 import com.example.homework.views.InfoView;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -18,7 +19,7 @@ public class InfoPresenter extends MvpPresenter<InfoView> {
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
-        getViewState().onRequestPermission();
+        getViewState().onRequestPermission(new RequestReadContact());
     }
 
     public InfoPresenter(String id, ContactsProvider contactsProvider) {
