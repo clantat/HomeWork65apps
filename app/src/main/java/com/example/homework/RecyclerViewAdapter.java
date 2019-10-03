@@ -3,16 +3,20 @@ package com.example.homework;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> implements Filterable {
 
-    private List<ShortContact> mData;
+    private List<ShortContact> data;
+    private List<ShortContact> dataFull;
 
     public RecyclerViewAdapter() {
     }
@@ -28,7 +32,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
                 ((MainActivity) parent.getContext()).getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.container, FragmentContactInfo.newInstance(
-                                mData.get(vHolder.getAdapterPosition()).getId()))
+                                data.get(vHolder.getAdapterPosition()).getId()))
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .addToBackStack(null).commit();
             }
@@ -38,17 +42,51 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.onBind(mData.get(position));
+        holder.onBind(data.get(position));
     }
 
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return data.size();
     }
 
     public void setData(List<ShortContact> data) {
-        mData = data;
+        this.data = data;
+        dataFull = new ArrayList<>(data);
         notifyDataSetChanged();
     }
+
+    @Override
+    public Filter getFilter() {
+        return nameFilter;
+    }
+
+    private Filter nameFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<ShortContact> filteredList = new ArrayList<>();
+            if (charSequence == null || charSequence.length() == 0) {
+                filteredList.addAll(dataFull);
+            } else {
+                String filterPattern = charSequence.toString().toLowerCase().trim();
+                for (ShortContact contact : dataFull){
+                    if(contact.getName().toLowerCase().contains(filterPattern)){
+                        filteredList.add(contact);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            data.clear();
+            data.addAll((List)filterResults.values);
+            // TODO diffutils
+            notifyDataSetChanged();
+        }
+    };
 }
