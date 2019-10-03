@@ -35,5 +35,6 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
         if (disposable != null) {
             disposable.dispose();
         }
+        contactsProvider = null;
     }
 }
