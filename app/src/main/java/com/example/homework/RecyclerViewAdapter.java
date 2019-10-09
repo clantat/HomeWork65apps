@@ -1,5 +1,6 @@
 package com.example.homework;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -54,39 +56,42 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> implem
     public void setData(List<ShortContact> data) {
         this.data = data;
         dataFull = new ArrayList<>(data);
-        notifyDataSetChanged();
+        updateShortContactListItems(data);
     }
 
     @Override
     public Filter getFilter() {
-        return nameFilter;
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                List<ShortContact> filteredList = new ArrayList<>();
+                if (TextUtils.isEmpty(charSequence)) {
+                    filteredList = dataFull;
+                } else {
+                    String filterPattern = charSequence.toString().toLowerCase().trim();
+                    for (ShortContact contact : dataFull) {
+                        if (contact.getName().toLowerCase().contains(filterPattern)) {
+                            filteredList.add(contact);
+                        }
+                    }
+
+                }
+                FilterResults results = new FilterResults();
+                results.values = filteredList;
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                updateShortContactListItems((List<ShortContact>) filterResults.values);
+            }
+        };
     }
 
-    private Filter nameFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence charSequence) {
-            List<ShortContact> filteredList = new ArrayList<>();
-            if (charSequence == null || charSequence.length() == 0) {
-                filteredList.addAll(dataFull);
-            } else {
-                String filterPattern = charSequence.toString().toLowerCase().trim();
-                for (ShortContact contact : dataFull){
-                    if(contact.getName().toLowerCase().contains(filterPattern)){
-                        filteredList.add(contact);
-                    }
-                }
-            }
-            FilterResults results = new FilterResults();
-            results.values = filteredList;
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            data.clear();
-            data.addAll((List)filterResults.values);
-            // TODO diffutils
-            notifyDataSetChanged();
-        }
-    };
+    private void updateShortContactListItems(List<ShortContact> shortContacts) {
+        final ShortContactDiffCallback diffCallback = new ShortContactDiffCallback(this.data, shortContacts);
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+        this.data = shortContacts;
+        diffResult.dispatchUpdatesTo(this);
+    }
 }

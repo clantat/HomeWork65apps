@@ -1,6 +1,7 @@
 package com.example.homework;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,8 +33,27 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     private View view;
     private RecyclerView myRecyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
+    private SearchView searchView;
+    private CharSequence searchText;
 
     public FragmentContacts() {
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        searchText = searchView.getQuery();
+        outState.putCharSequence("searchText", searchText);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            searchText = savedInstanceState.getCharSequence("searchText");
+        }
+
     }
 
     @Nullable
@@ -79,18 +99,16 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
         super.onDestroyView();
         view = null;
         myRecyclerView = null;
-        recyclerViewAdapter = null;
+        searchView = null;
+        searchText = null;
     }
 
-    //TODO пофиксить поворот экрана(отображать через mvpView и реализовать через презентер).
-    //При вводе символов и смене конфигурации остаются только те контакты,
-    //которые подходили под поиск и отменяется ввод с клавиатуры.
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.contacts_menu,menu);
+        inflater.inflate(R.menu.contacts_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView = (SearchView) searchItem.getActionView();
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -104,5 +122,10 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
                 return false;
             }
         });
+        if (!TextUtils.isEmpty(searchText)) {
+            searchItem.expandActionView();
+            searchView.setQuery(searchText, false);
+        }
+
     }
 }
