@@ -2,6 +2,7 @@ package com.example.homework;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +25,8 @@ import com.example.homework.presenters.ContactsPresenter;
 import com.example.homework.views.ContactsView;
 
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 
 public class FragmentContacts extends MvpAppCompatFragment implements ContactsView {
@@ -80,6 +83,9 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
 
     @Override
     public void setContacts(List<ShortContact> list) {
+        for (int i = 0; i < list.size(); i++) {
+            Log.i(TAG, "setContacts: name" + list.get(i).getName());
+        }
         recyclerViewAdapter = new RecyclerViewAdapter();
         recyclerViewAdapter.setData(list);
         myRecyclerView.setAdapter(recyclerViewAdapter);
@@ -98,6 +104,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     public void onDestroyView() {
         super.onDestroyView();
         view = null;
+        myRecyclerView.setAdapter(null);
         myRecyclerView = null;
         searchView = null;
         searchText = null;
@@ -118,7 +125,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                recyclerViewAdapter.getFilter().filter(newText);
+                contactsPresenter.getContacts(newText);
                 return false;
             }
         });

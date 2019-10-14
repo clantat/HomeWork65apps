@@ -1,24 +1,20 @@
 package com.example.homework;
 
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> implements Filterable {
-
-    private List<ShortContact> data;
-    private List<ShortContact> dataFull;
+public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
+    private final AsyncListDiffer<ShortContact> asyncListDiffer =
+            new AsyncListDiffer<>(this, DIFF_CALLBACK_SHORTCONTACT);
 
     public RecyclerViewAdapter() {
     }
@@ -34,7 +30,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> implem
                 ((MainActivity) parent.getContext()).getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.container, FragmentContactInfo.newInstance(
-                                data.get(vHolder.getAdapterPosition()).getId()))
+                                asyncListDiffer.getCurrentList().get(vHolder.getAdapterPosition()).getId()))
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .addToBackStack(null).commit();
             }
@@ -44,54 +40,32 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> implem
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.onBind(data.get(position));
+        ShortContact shortContact = asyncListDiffer.getCurrentList().get(position);
+        holder.onBind(shortContact);
     }
 
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return asyncListDiffer.getCurrentList().size();
     }
 
     public void setData(List<ShortContact> data) {
-        this.data = data;
-        dataFull = new ArrayList<>(data);
-        updateShortContactListItems(data);
+        asyncListDiffer.submitList(data);
     }
 
-    @Override
-    public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence charSequence) {
-                List<ShortContact> filteredList = new ArrayList<>();
-                if (TextUtils.isEmpty(charSequence)) {
-                    filteredList = dataFull;
-                } else {
-                    String filterPattern = charSequence.toString().toLowerCase().trim();
-                    for (ShortContact contact : dataFull) {
-                        if (contact.getName().toLowerCase().contains(filterPattern)) {
-                            filteredList.add(contact);
-                        }
-                    }
+    public static final DiffUtil.ItemCallback<ShortContact> DIFF_CALLBACK_SHORTCONTACT
+            = new DiffUtil.ItemCallback<ShortContact>() {
+        @Override
+        public boolean areItemsTheSame(
+                @NonNull ShortContact oldShortContact, @NonNull ShortContact newShortContact) {
+            return oldShortContact.getId().equals(newShortContact.getId());
+        }
 
-                }
-                FilterResults results = new FilterResults();
-                results.values = filteredList;
-                return results;
-            }
-
-            @Override
-            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                updateShortContactListItems((List<ShortContact>) filterResults.values);
-            }
-        };
-    }
-
-    private void updateShortContactListItems(List<ShortContact> shortContacts) {
-        final ShortContactDiffCallback diffCallback = new ShortContactDiffCallback(this.data, shortContacts);
-        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
-        this.data = shortContacts;
-        diffResult.dispatchUpdatesTo(this);
-    }
+        @Override
+        public boolean areContentsTheSame(
+                @NonNull ShortContact oldShortContact, @NonNull ShortContact newShortContact) {
+            return oldShortContact.getName().equals(newShortContact.getName());
+        }
+    };
 }

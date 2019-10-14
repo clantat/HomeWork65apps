@@ -7,12 +7,12 @@ import com.example.homework.RequestReadContact;
 import com.example.homework.views.ContactsView;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 
 @InjectViewState
 public class ContactsPresenter extends MvpPresenter<ContactsView> {
     private ContactsProvider contactsProvider;
-    private Disposable disposable;
+    private CompositeDisposable compositeDisposable;
 
     public ContactsPresenter(ContactsProvider contactsProvider) {
         this.contactsProvider = contactsProvider;
@@ -25,16 +25,23 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
     }
 
     public void getContacts() {
-        disposable = contactsProvider.getContacts()
+        compositeDisposable = new CompositeDisposable();
+        compositeDisposable.add(contactsProvider.getContacts()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(item -> getViewState().setContacts(item));
+                .subscribe(item -> getViewState().setContacts(item)));
+    }
+
+    public void getContacts(String searchText) {
+        compositeDisposable.add(contactsProvider.getContacts(searchText)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(item -> getViewState().setContacts(item)));
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (disposable != null) {
-            disposable.dispose();
+        if (compositeDisposable != null) {
+            compositeDisposable.dispose();
         }
         contactsProvider = null;
     }
