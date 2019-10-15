@@ -2,7 +2,6 @@ package com.example.homework;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,10 +24,10 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.example.homework.presenters.ContactsPresenter;
 import com.example.homework.views.ContactsView;
+import com.vlad1m1r.lemniscate.roulette.HypotrochoidProgressView;
 
 import java.util.List;
-
-import static android.content.ContentValues.TAG;
+import java.util.Objects;
 
 
 public class FragmentContacts extends MvpAppCompatFragment implements ContactsView {
@@ -38,6 +39,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     private RecyclerViewAdapter recyclerViewAdapter;
     private SearchView searchView;
     private CharSequence searchText;
+    private HypotrochoidProgressView progressView;
 
     public FragmentContacts() {
     }
@@ -65,7 +67,12 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
         view = inflater.inflate(R.layout.contact_fragment, container, false);
         myRecyclerView = view.findViewById(R.id.contact_recyclerview);
         myRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        progressView = view.findViewById(R.id.progress_bar);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(getContext(), R.drawable.contacts_divider)));
+        myRecyclerView.addItemDecoration(dividerItemDecoration);
         setHasOptionsMenu(true);
+
         return view;
     }
 
@@ -83,12 +90,19 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
 
     @Override
     public void setContacts(List<ShortContact> list) {
-        for (int i = 0; i < list.size(); i++) {
-            Log.i(TAG, "setContacts: name" + list.get(i).getName());
-        }
         recyclerViewAdapter = new RecyclerViewAdapter();
         recyclerViewAdapter.setData(list);
         myRecyclerView.setAdapter(recyclerViewAdapter);
+    }
+
+    @Override
+    public void showLoading() {
+        progressView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoading() {
+        progressView.setVisibility(View.INVISIBLE);
     }
 
     @Override

@@ -13,4 +13,6 @@ public interface ContactsView extends MvpView {
     void onRequestPermission(RequestPermissionFragment requestPermissionFragment);
 
     void setContacts(List<ShortContact> list);
+    void showLoading();
+    void hideLoading();
 }

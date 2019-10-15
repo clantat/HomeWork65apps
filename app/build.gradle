@@ -42,7 +42,8 @@ dependencies {
     annotationProcessor 'tech.schoolhelper:moxy-x-compiler:1.7.0'
     implementation 'tech.schoolhelper:moxy-x-android:1.7.0'
     implementation 'tech.schoolhelper:moxy-x-androidx:1.7.0'
-
+    //Custom progress bar
+    implementation 'com.github.VladimirWrites:Lemniscate:2.0.2'
 
     //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:28.0.0'
