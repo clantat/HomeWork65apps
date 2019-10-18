@@ -84,7 +84,7 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (RequestReadContact.onRequestPermissionResult(requestCode, grantResults))
+        if (infoPresenter.getRequestReadContact().onRequestPermissionResult(requestCode, grantResults))
             infoPresenter.init();
         else
             Toast.makeText(getActivity(), "Третьего шанса не будет", Toast.LENGTH_LONG).show();

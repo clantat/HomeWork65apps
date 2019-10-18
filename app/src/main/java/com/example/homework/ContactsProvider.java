@@ -78,13 +78,17 @@ public class ContactsProvider {
             if (cursor != null)
                 try {
                     while (cursor.moveToNext()) {
-                        e.onNext(cursor.getString(cursor
-                                .getColumnIndex(ContactsContract.Contacts._ID)));
+                        if (!e.isDisposed())
+                            e.onNext(cursor.getString(cursor
+                                    .getColumnIndex(ContactsContract.Contacts._ID)));
+                        else return;
                     }
+                    e.onComplete();
+                } catch (Throwable throwable) {
+                    e.onError(throwable);
                 } finally {
                     cursor.close();
                 }
-            e.onComplete();
         });
     }
 

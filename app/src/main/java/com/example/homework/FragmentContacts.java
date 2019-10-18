@@ -108,9 +108,9 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (RequestReadContact.onRequestPermissionResult(requestCode, grantResults))
+        if (contactsPresenter.getRequestReadContact().onRequestPermissionResult(requestCode, grantResults)) {
             contactsPresenter.getContacts();
-        else
+        } else
             Toast.makeText(getActivity(), "Второго шанса не будет", Toast.LENGTH_LONG).show();
     }
 
@@ -143,6 +143,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
                 return false;
             }
         });
+        // TODO пофиксить прогрузку при getcontacts, иначе не успевает отображаться поиск после поворота
         if (!TextUtils.isEmpty(searchText)) {
             searchItem.expandActionView();
             searchView.setQuery(searchText, false);

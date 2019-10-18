@@ -15,16 +15,21 @@ public class InfoPresenter extends MvpPresenter<InfoView> {
     private Disposable disposable;
     private String id;
     private ContactsProvider contactsProvider;
+    private RequestReadContact requestReadContact;
 
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
-        getViewState().onRequestPermission(new RequestReadContact());
+        getViewState().onRequestPermission(requestReadContact);
     }
 
+    public RequestReadContact getRequestReadContact(){
+        return this.requestReadContact;
+    }
     public InfoPresenter(String id, ContactsProvider contactsProvider) {
         this.id = id;
         this.contactsProvider = contactsProvider;
+        requestReadContact = new RequestReadContact();
     }
 
     public void init() {
