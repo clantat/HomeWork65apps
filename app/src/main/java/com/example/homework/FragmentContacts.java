@@ -97,13 +97,11 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
 
     @Override
     public void showLoading() {
-        contactsPresenter.setLoading(true);
         progressView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoading() {
-        contactsPresenter.setLoading(false);
         progressView.setVisibility(View.INVISIBLE);
     }
 
