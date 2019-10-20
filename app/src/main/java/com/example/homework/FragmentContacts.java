@@ -97,11 +97,13 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
 
     @Override
     public void showLoading() {
+        contactsPresenter.setLoading(true);
         progressView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoading() {
+        contactsPresenter.setLoading(false);
         progressView.setVisibility(View.INVISIBLE);
     }
 
@@ -124,6 +126,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
         searchText = null;
     }
 
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -143,11 +146,12 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
                 return false;
             }
         });
-        // TODO пофиксить прогрузку при getcontacts, иначе не успевает отображаться поиск после поворота
         if (!TextUtils.isEmpty(searchText)) {
             searchItem.expandActionView();
             searchView.setQuery(searchText, false);
         }
+
+        // TODO пофиксить прогрузку при getcontacts, иначе не успевает отображаться поиск после поворота
 
     }
 }

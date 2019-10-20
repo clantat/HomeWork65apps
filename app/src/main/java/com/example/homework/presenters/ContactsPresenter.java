@@ -10,12 +10,14 @@ import com.example.homework.views.ContactsView;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 @InjectViewState
 public class ContactsPresenter extends MvpPresenter<ContactsView> {
     private ContactsProvider contactsProvider;
     private CompositeDisposable compositeDisposable;
     private RequestReadContact requestReadContact;
+    private Disposable disposableSearch;
 
     public ContactsPresenter(ContactsProvider contactsProvider) {
         this.contactsProvider = contactsProvider;
@@ -30,9 +32,10 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
     }
 
 
-    public RequestReadContact getRequestReadContact (){
+    public RequestReadContact getRequestReadContact() {
         return this.requestReadContact;
     }
+
     public void getContacts() {
         if (requestReadContact.getReadContactPermission())
             compositeDisposable.add(contactsProvider.getContacts()
@@ -47,19 +50,20 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
     public void getContacts(String searchText) {
         if (requestReadContact.getReadContactPermission())
             if (!TextUtils.isEmpty(searchText))
-                compositeDisposable.add(contactsProvider.getContacts(searchText)
+                disposableSearch = contactsProvider.getContacts(searchText)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(item -> getViewState().setContacts(item)));
+                        .doAfterSuccess(__->disposableSearch.dispose())
+                        .subscribe(item -> getViewState().setContacts(item));
             else getContacts();
         else getViewState().onRequestPermission(requestReadContact);
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (compositeDisposable != null) {
-            compositeDisposable.dispose();
-        }
+        if (disposableSearch != null) disposableSearch.dispose();
+        if (compositeDisposable != null) compositeDisposable.dispose();
         contactsProvider = null;
     }
 }
