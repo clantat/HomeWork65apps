@@ -41,20 +41,20 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
             compositeDisposable.add(contactsProvider.getContacts()
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(__ -> getViewState().showLoading())
-                    .doOnTerminate(() -> getViewState().hideLoading())
-                    .subscribe(item -> getViewState().setContacts(item)
+                    .doOnSuccess(__ -> getViewState().hideLoading())
+                    .subscribe(__ -> getViewState().setContacts(__)
                     ));
         else getViewState().onRequestPermission(requestReadContact);
     }
 
     public void getContacts(String searchText) {
         if (requestReadContact.getReadContactPermission())
-            if (!TextUtils.isEmpty(searchText))
+            if (!TextUtils.isEmpty(searchText)) {
                 disposableSearch = contactsProvider.getContacts(searchText)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .doAfterSuccess(__->disposableSearch.dispose())
-                        .subscribe(item -> getViewState().setContacts(item));
-            else getContacts();
+                        .doAfterSuccess(__ -> disposableSearch.dispose())
+                        .subscribe(__ -> getViewState().setContacts(__));
+            } else getContacts();
         else getViewState().onRequestPermission(requestReadContact);
     }
 
