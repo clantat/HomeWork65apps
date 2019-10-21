@@ -6,13 +6,15 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.AsyncListDiffer;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
-
-    private List<ShortContact> mData;
+    private final AsyncListDiffer<ShortContact> asyncListDiffer =
+            new AsyncListDiffer<>(this, DIFF_CALLBACK_SHORTCONTACT);
 
     public RecyclerViewAdapter() {
     }
@@ -28,7 +30,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
                 ((MainActivity) parent.getContext()).getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.container, FragmentContactInfo.newInstance(
-                                mData.get(vHolder.getAdapterPosition()).getId()))
+                                asyncListDiffer.getCurrentList().get(vHolder.getAdapterPosition()).getId()))
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .addToBackStack(null).commit();
             }
@@ -38,17 +40,32 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.onBind(mData.get(position));
+        ShortContact shortContact = asyncListDiffer.getCurrentList().get(position);
+        holder.onBind(shortContact);
     }
 
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return asyncListDiffer.getCurrentList().size();
     }
 
     public void setData(List<ShortContact> data) {
-        mData = data;
-        notifyDataSetChanged();
+        asyncListDiffer.submitList(data);
     }
+
+    public static final DiffUtil.ItemCallback<ShortContact> DIFF_CALLBACK_SHORTCONTACT
+            = new DiffUtil.ItemCallback<ShortContact>() {
+        @Override
+        public boolean areItemsTheSame(
+                @NonNull ShortContact oldShortContact, @NonNull ShortContact newShortContact) {
+            return oldShortContact.getId().equals(newShortContact.getId());
+        }
+
+        @Override
+        public boolean areContentsTheSame(
+                @NonNull ShortContact oldShortContact, @NonNull ShortContact newShortContact) {
+            return oldShortContact.getName().equals(newShortContact.getName());
+        }
+    };
 }

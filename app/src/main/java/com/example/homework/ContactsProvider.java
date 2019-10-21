@@ -32,10 +32,18 @@ public class ContactsProvider {
                 .toList();
     }
 
+    public Single<List<ShortContact>> getContacts(String searchText) {
+        return searchName(searchText)
+                .subscribeOn(Schedulers.io())
+                .flatMapSingle(this::getShortContact)
+                .toList();
+    }
+
     public Single<Contact> getContactSingle(String Id) {
         return Single.fromCallable(() -> new Contact(Id, getNameF(Id), getPhoneF(Id),
                 getEmailF(Id), BitmapFactory.decodeStream(openPhoto(Id))));
     }
+
 
     private Single<ShortContact> getShortContact(String Id) {
         return Single.fromCallable(() -> new ShortContact(Id, getNameF(Id), getPhoneF(Id)));
@@ -55,6 +63,32 @@ public class ContactsProvider {
                     cursor.close();
                 }
             e.onComplete();
+        });
+    }
+
+    private Observable<String> searchName(String searchText) {
+        return Observable.create(e -> {
+            String[] projection = {
+                    ContactsContract.Contacts._ID,
+                    ContactsContract.Contacts.DISPLAY_NAME};
+            Cursor cursor = contentResolver
+                    .query(ContactsContract.Contacts.CONTENT_URI, projection,
+                            ContactsContract.Contacts.DISPLAY_NAME + " LIKE '" + searchText + "%'",
+                            null, null);
+            if (cursor != null)
+                try {
+                    while (cursor.moveToNext()) {
+                        if (!e.isDisposed())
+                            e.onNext(cursor.getString(cursor
+                                    .getColumnIndex(ContactsContract.Contacts._ID)));
+                        else return;
+                    }
+                    e.onComplete();
+                } catch (Throwable throwable) {
+                    e.onError(throwable);
+                } finally {
+                    cursor.close();
+                }
         });
     }
 
