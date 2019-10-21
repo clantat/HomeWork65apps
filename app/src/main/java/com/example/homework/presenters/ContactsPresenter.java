@@ -49,12 +49,12 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
 
     public void getContacts(String searchText) {
         if (requestReadContact.getReadContactPermission())
-            if (!TextUtils.isEmpty(searchText))
+            if (!TextUtils.isEmpty(searchText)) {
+                if (disposableSearch != null) disposableSearch.dispose();
                 disposableSearch = contactsProvider.getContacts(searchText)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .doAfterSuccess(__->disposableSearch.dispose())
                         .subscribe(item -> getViewState().setContacts(item));
-            else getContacts();
+            } else getContacts();
         else getViewState().onRequestPermission(requestReadContact);
     }
 
