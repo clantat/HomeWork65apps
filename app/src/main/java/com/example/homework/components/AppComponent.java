@@ -5,6 +5,7 @@ import com.example.homework.modules.AppModule;
 import com.example.homework.modules.ContactsPresenterModule;
 import com.example.homework.modules.ContactsProviderModule;
 import com.example.homework.modules.ContentResolverModule;
+import com.example.homework.modules.InfoPresenterModule;
 
 import javax.inject.Singleton;
 
@@ -13,5 +14,8 @@ import dagger.Component;
 @Component(modules = {AppModule.class, ContentResolverModule.class, ContactsProviderModule.class})
 @Singleton
 public interface AppComponent {
-    ContactsPresenterComponent plusContactsPresenterComponent(ContactsPresenterModule contactsPresenterModule);
+
+    FragmentContactsComponent plusFragmentContactsComponent(ContactsPresenterModule contactsPresenterModule);
+
+    FragmentInfoComponent plusFragmentInfoComponent(InfoPresenterModule infoPresenterModule);
 }

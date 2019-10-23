@@ -1,6 +1,5 @@
 package com.example.homework;
 
-import android.content.ContentResolver;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -23,12 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
-import com.example.homework.components.ContactsPresenterComponent;
-import com.example.homework.components.DaggerAppComponent;
-import com.example.homework.modules.AppModule;
-import com.example.homework.modules.ContactsPresenterModule;
-import com.example.homework.modules.ContactsProviderModule;
-import com.example.homework.modules.ContentResolverModule;
 import com.example.homework.presenters.ContactsPresenter;
 import com.example.homework.views.ContactsView;
 import com.vlad1m1r.lemniscate.roulette.HypotrochoidProgressView;
@@ -37,18 +30,14 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 
 public class FragmentContacts extends MvpAppCompatFragment implements ContactsView {
 
     @Inject
-    ContactsProviderModule contactsProviderModule;
-    @Inject
-    ContactsPresenterModule contactsPresenterModule;
-    @Inject
-    ContentResolverModule contentResolverModule;
-    @Inject
-    AppModule appModule;
+    Provider<ContactsPresenter> presenterProvider;
+
     @InjectPresenter
     ContactsPresenter contactsPresenter;
 
@@ -58,7 +47,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     private SearchView searchView;
     private CharSequence searchText;
     private HypotrochoidProgressView progressView;
-    private ContactsPresenterComponent contactsPresenterComponent;
+
     public FragmentContacts() {
     }
 
@@ -72,7 +61,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        contactsPresenterComponent.inject(this);
+        MyApp.get().plusFragmentContactsComponent().inject(this);
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getCharSequence("searchText");
@@ -97,10 +86,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
 
     @ProvidePresenter
     ContactsPresenter provideContactsPresenter() {
-        return contactsPresenterModule
-                .provideContactsPresenter(contactsProviderModule
-                        .provideContactsProvider(contentResolverModule
-                                .provideContentResolver(appModule.provideContext())));
+        return presenterProvider.get();
     }
 
     @Override
@@ -142,10 +128,13 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
         view = null;
         myRecyclerView.setAdapter(null);
         myRecyclerView = null;
-        searchView = null;
-        searchText = null;
     }
 
+    @Override
+    public void onDestroy() {
+        MyApp.get().clearFragmentContactsComponent();
+        super.onDestroy();
+    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {

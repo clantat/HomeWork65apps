@@ -8,6 +8,6 @@ import dagger.Subcomponent;
 
 @Subcomponent(modules = ContactsPresenterModule.class)
 @ContactsScreenScope
-public interface ContactsPresenterComponent {
-    void inject (FragmentContacts fragmentContacts);
+public interface FragmentContactsComponent {
+    void inject(FragmentContacts fragmentContacts);
 }

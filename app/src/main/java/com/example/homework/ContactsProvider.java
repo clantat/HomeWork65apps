@@ -11,16 +11,17 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
 public class ContactsProvider {
+
     private ContentResolver contentResolver;
 
-    public ContactsProvider() {
-    }
-
+    @Inject
     public ContactsProvider(ContentResolver contentResolver) {
         this.contentResolver = contentResolver;
     }

@@ -3,16 +3,19 @@ package com.example.homework;
 import android.app.Application;
 
 import com.example.homework.components.AppComponent;
-import com.example.homework.components.ContactsPresenterComponent;
 import com.example.homework.components.DaggerAppComponent;
+import com.example.homework.components.FragmentContactsComponent;
+import com.example.homework.components.FragmentInfoComponent;
 import com.example.homework.modules.AppModule;
 import com.example.homework.modules.ContactsPresenterModule;
+import com.example.homework.modules.InfoPresenterModule;
 
 public class MyApp extends Application {
     protected static MyApp instance;
 
     private AppComponent appComponent;
-    private ContactsPresenterComponent contactsPresenterComponent;
+    private FragmentContactsComponent fragmentContactsComponent;
+    private FragmentInfoComponent fragmentInfoComponent;
 
     public static MyApp get() {
         return instance;
@@ -27,13 +30,24 @@ public class MyApp extends Application {
                 .build();
     }
 
-    public ContactsPresenterComponent plusContactsPresenterComponent() {
-        if (contactsPresenterComponent == null)
-            contactsPresenterComponent = appComponent.plusContactsPresenterComponent(new ContactsPresenterModule());
-        return contactsPresenterComponent;
+    public FragmentContactsComponent plusFragmentContactsComponent() {
+        if (fragmentContactsComponent == null)
+            fragmentContactsComponent = appComponent.plusFragmentContactsComponent(new ContactsPresenterModule());
+        return fragmentContactsComponent;
     }
 
-    public void ClearContactsPresenterComponent (){
-        contactsPresenterComponent = null;
+    public void clearFragmentContactsComponent() {
+        fragmentContactsComponent = null;
     }
+
+    public FragmentInfoComponent plusFragmentInfoComponent() {
+        if (fragmentInfoComponent == null)
+            fragmentInfoComponent = appComponent.plusFragmentInfoComponent(new InfoPresenterModule());
+        return fragmentInfoComponent;
+    }
+
+    public void clearFragmentInfoComponent() {
+        fragmentInfoComponent = null;
+    }
+
 }

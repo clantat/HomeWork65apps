@@ -17,7 +17,13 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.example.homework.presenters.InfoPresenter;
 import com.example.homework.views.InfoView;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 public class FragmentContactInfo extends MvpAppCompatFragment implements InfoView {
+
+    @Inject
+    Provider<InfoPresenter> infoPresenterProvider;
     @InjectPresenter
     InfoPresenter infoPresenter;
 
@@ -28,6 +34,12 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
     private ImageView imageView;
 
     public FragmentContactInfo() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        MyApp.get().plusFragmentInfoComponent().inject(this);
+        super.onCreate(savedInstanceState);
     }
 
     @Nullable
@@ -51,11 +63,19 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
         imageView = null;
     }
 
+    @Override
+    public void onDestroy() {
+        MyApp.get().clearFragmentInfoComponent();
+        super.onDestroy();
+    }
+
     @ProvidePresenter
     InfoPresenter provideInfoPresenter() {
         String id = null;
         if (getArguments() != null) id = getArguments().getString("id");
-        return new InfoPresenter(id, new ContactsProvider(getActivity().getContentResolver()));
+        InfoPresenter infoPresenter = infoPresenterProvider.get();
+        infoPresenter.setId(id);
+        return infoPresenter;
     }
 
     public static FragmentContactInfo newInstance(String id) {

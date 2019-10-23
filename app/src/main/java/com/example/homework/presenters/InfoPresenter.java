@@ -6,6 +6,8 @@ import com.example.homework.ContactsProvider;
 import com.example.homework.RequestReadContact;
 import com.example.homework.views.InfoView;
 
+import javax.inject.Inject;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -23,13 +25,18 @@ public class InfoPresenter extends MvpPresenter<InfoView> {
         getViewState().onRequestPermission(requestReadContact);
     }
 
-    public RequestReadContact getRequestReadContact(){
+    public RequestReadContact getRequestReadContact() {
         return this.requestReadContact;
     }
-    public InfoPresenter(String id, ContactsProvider contactsProvider) {
-        this.id = id;
+
+    @Inject
+    public InfoPresenter(ContactsProvider contactsProvider) {
         this.contactsProvider = contactsProvider;
         requestReadContact = new RequestReadContact();
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void init() {
