@@ -160,7 +160,6 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
             searchView.setQuery(searchText, false);
         }
 
-        // TODO пофиксить прогрузку при getcontacts, иначе не успевает отображаться поиск после поворота
-
+        // TODO поиск в SearchView отображается до загрузки контактов после поворота или возврата экрана
     }
 }
