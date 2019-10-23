@@ -58,7 +58,6 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
                 disposableSearch = contactsProvider.getContacts(searchText)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(__ -> getViewState().setContacts(__));
-                        .subscribe(item -> getViewState().setContacts(item));
             } else getContacts();
         else getViewState().onRequestPermission(requestReadContact);
     }
