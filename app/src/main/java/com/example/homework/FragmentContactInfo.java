@@ -38,7 +38,7 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        MyApp.get().plusFragmentInfoComponent().inject(this);
+        MyApp.get().plusFragmentInfoComponent(this).inject(this);
         super.onCreate(savedInstanceState);
     }
 
@@ -71,11 +71,7 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
 
     @ProvidePresenter
     InfoPresenter provideInfoPresenter() {
-        String id = null;
-        if (getArguments() != null) id = getArguments().getString("id");
-        InfoPresenter infoPresenter = infoPresenterProvider.get();
-        infoPresenter.setId(id);
-        return infoPresenter;
+        return infoPresenterProvider.get();
     }
 
     public static FragmentContactInfo newInstance(String id) {

@@ -30,13 +30,10 @@ public class InfoPresenter extends MvpPresenter<InfoView> {
     }
 
     @Inject
-    public InfoPresenter(ContactsProvider contactsProvider) {
+    public InfoPresenter(ContactsProvider contactsProvider, String id) {
         this.contactsProvider = contactsProvider;
-        requestReadContact = new RequestReadContact();
-    }
-
-    public void setId(String id) {
         this.id = id;
+        requestReadContact = new RequestReadContact();
     }
 
     public void init() {

@@ -15,7 +15,6 @@ import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 
 public class ContactsProvider {
 
@@ -28,14 +27,12 @@ public class ContactsProvider {
 
     public Single<List<ShortContact>> getContacts() {
         return getContactsObs()
-                .subscribeOn(Schedulers.io())
                 .flatMapSingle(this::getShortContact)
                 .toList();
     }
 
     public Single<List<ShortContact>> getContacts(String searchText) {
         return searchName(searchText)
-                .subscribeOn(Schedulers.io())
                 .flatMapSingle(this::getShortContact)
                 .toList();
     }

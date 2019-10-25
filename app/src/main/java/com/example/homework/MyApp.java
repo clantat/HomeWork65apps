@@ -40,9 +40,9 @@ public class MyApp extends Application {
         fragmentContactsComponent = null;
     }
 
-    public FragmentInfoComponent plusFragmentInfoComponent() {
+    public FragmentInfoComponent plusFragmentInfoComponent(FragmentContactInfo fragmentContactInfo) {
         if (fragmentInfoComponent == null)
-            fragmentInfoComponent = appComponent.plusFragmentInfoComponent(new InfoPresenterModule());
+            fragmentInfoComponent = appComponent.plusFragmentInfoComponent(new InfoPresenterModule(fragmentContactInfo));
         return fragmentInfoComponent;
     }
 

@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 @InjectViewState
 public class ContactsPresenter extends MvpPresenter<ContactsView> {
@@ -43,6 +44,7 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
     public void getContacts() {
         if (requestReadContact.getReadContactPermission())
             compositeDisposable.add(contactsProvider.getContacts()
+                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(__ -> getViewState().showLoading())
                     .doOnSuccess(__ -> getViewState().hideLoading())
@@ -56,6 +58,7 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
             if (!TextUtils.isEmpty(searchText)) {
                 if (disposableSearch != null) disposableSearch.dispose();
                 disposableSearch = contactsProvider.getContacts(searchText)
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(__ -> getViewState().setContacts(__));
             } else getContacts();

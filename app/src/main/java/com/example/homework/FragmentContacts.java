@@ -55,8 +55,10 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        searchText = searchView.getQuery();
-        outState.putCharSequence("searchText", searchText);
+        if(searchView!=null) {
+            searchText = searchView.getQuery();
+            outState.putCharSequence("searchText", searchText);
+        }
     }
 
     @Override
