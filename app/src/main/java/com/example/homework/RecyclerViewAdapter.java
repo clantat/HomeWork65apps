@@ -12,11 +12,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import ru.terrakok.cicerone.Router;
+
 public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
+
+    private Router router;
+
     private final AsyncListDiffer<ShortContact> asyncListDiffer =
             new AsyncListDiffer<>(this, DIFF_CALLBACK_SHORTCONTACT);
 
-    public RecyclerViewAdapter() {
+    @Inject
+    public RecyclerViewAdapter(Router router) {
+        this.router = router;
     }
 
     @NonNull
@@ -27,12 +36,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
         vHolder.getItem_contact().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) parent.getContext()).getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container, FragmentContactInfo.newInstance(
-                                asyncListDiffer.getCurrentList().get(vHolder.getAdapterPosition()).getId()))
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .addToBackStack(null).commit();
+                router.navigateTo(new Screens.ContactInfoScreen(2,
+                        asyncListDiffer.getCurrentList().get(vHolder.getAdapterPosition()).getId()));
             }
         });
         return vHolder;

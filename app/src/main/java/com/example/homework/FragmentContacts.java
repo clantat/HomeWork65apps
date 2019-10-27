@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,12 +33,15 @@ import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import ru.terrakok.cicerone.Router;
+
 
 public class FragmentContacts extends MvpAppCompatFragment implements ContactsView {
-
+    private static final String EXTRA_NUMBER = "extra_number";
     @Inject
     Provider<ContactsPresenter> presenterProvider;
-
+    @Inject
+    Router router;
     @InjectPresenter
     ContactsPresenter contactsPresenter;
 
@@ -51,6 +55,13 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     public FragmentContacts() {
     }
 
+    public static Fragment getNewInstance(int number) {
+        FragmentContacts fragmentContacts = new FragmentContacts();
+        Bundle args = new Bundle();
+        args.putInt(EXTRA_NUMBER,number);
+        fragmentContacts.setArguments(args);
+        return fragmentContacts;
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -100,7 +111,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
 
     @Override
     public void setContacts(List<ShortContact> list) {
-        recyclerViewAdapter = new RecyclerViewAdapter();
+        recyclerViewAdapter = new RecyclerViewAdapter(router);
         recyclerViewAdapter.setData(list);
         myRecyclerView.setAdapter(recyclerViewAdapter);
     }

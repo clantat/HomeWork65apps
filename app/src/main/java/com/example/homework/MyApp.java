@@ -13,12 +13,21 @@ import com.example.homework.modules.InfoPresenterModule;
 public class MyApp extends Application {
     protected static MyApp instance;
 
+    //Components
+
     private AppComponent appComponent;
     private FragmentContactsComponent fragmentContactsComponent;
     private FragmentInfoComponent fragmentInfoComponent;
 
     public static MyApp get() {
         return instance;
+    }
+
+    public AppComponent getAppComponent() {
+        if (appComponent == null) {
+            DaggerAppComponent.builder().build();
+        }
+        return appComponent;
     }
 
     @Override
@@ -29,6 +38,7 @@ public class MyApp extends Application {
                 .appModule(new AppModule(instance))
                 .build();
     }
+
 
     public FragmentContactsComponent plusFragmentContactsComponent() {
         if (fragmentContactsComponent == null)

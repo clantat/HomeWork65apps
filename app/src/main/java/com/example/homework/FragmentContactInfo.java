@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class FragmentContactInfo extends MvpAppCompatFragment implements InfoView {
-
+    private static final String EXTRA_NUMBER = "extra_number";
     @Inject
     Provider<InfoPresenter> infoPresenterProvider;
     @InjectPresenter
@@ -74,9 +74,10 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
         return infoPresenterProvider.get();
     }
 
-    public static FragmentContactInfo newInstance(String id) {
+    public static FragmentContactInfo newInstance(String id, int number) {
         FragmentContactInfo myFragment = new FragmentContactInfo();
         Bundle bundle = new Bundle();
+        bundle.putInt(EXTRA_NUMBER,number);
         bundle.putString("id", id);
         myFragment.setArguments(bundle);
         return myFragment;

@@ -33,6 +33,6 @@ public class InfoPresenterModule {
     @Provides
     @Named("contact_id")
     String provideContactId() {
-        return Objects.requireNonNull(fragmentContactInfo.getArguments().getString("id"));
+        return Objects.requireNonNull(Objects.requireNonNull(fragmentContactInfo.getArguments()).getString("id"));
     }
 }
