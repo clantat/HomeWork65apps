@@ -8,17 +8,22 @@ import com.example.homework.ContactsProvider;
 import com.example.homework.RequestReadContact;
 import com.example.homework.views.ContactsView;
 
+import javax.inject.Inject;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 @InjectViewState
 public class ContactsPresenter extends MvpPresenter<ContactsView> {
+
     private ContactsProvider contactsProvider;
     private CompositeDisposable compositeDisposable;
     private RequestReadContact requestReadContact;
     private Disposable disposableSearch;
 
+    @Inject
     public ContactsPresenter(ContactsProvider contactsProvider) {
         this.contactsProvider = contactsProvider;
         compositeDisposable = new CompositeDisposable();
@@ -39,10 +44,11 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
     public void getContacts() {
         if (requestReadContact.getReadContactPermission())
             compositeDisposable.add(contactsProvider.getContacts()
+                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(__ -> getViewState().showLoading())
-                    .doOnTerminate(() -> getViewState().hideLoading())
-                    .subscribe(item -> getViewState().setContacts(item)
+                    .doOnSuccess(__ -> getViewState().hideLoading())
+                    .subscribe(__ -> getViewState().setContacts(__)
                     ));
         else getViewState().onRequestPermission(requestReadContact);
     }
@@ -52,8 +58,9 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
             if (!TextUtils.isEmpty(searchText)) {
                 if (disposableSearch != null) disposableSearch.dispose();
                 disposableSearch = contactsProvider.getContacts(searchText)
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(item -> getViewState().setContacts(item));
+                        .subscribe(__ -> getViewState().setContacts(__));
             } else getContacts();
         else getViewState().onRequestPermission(requestReadContact);
     }

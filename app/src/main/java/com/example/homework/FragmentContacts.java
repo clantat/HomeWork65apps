@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,8 +30,18 @@ import com.vlad1m1r.lemniscate.roulette.HypotrochoidProgressView;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+import ru.terrakok.cicerone.Router;
+
 
 public class FragmentContacts extends MvpAppCompatFragment implements ContactsView {
+    private static final String EXTRA_NUMBER = "extra_number";
+    @Inject
+    Provider<ContactsPresenter> presenterProvider;
+    @Inject
+    Router router;
     @InjectPresenter
     ContactsPresenter contactsPresenter;
 
@@ -44,16 +55,26 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     public FragmentContacts() {
     }
 
+    public static Fragment getNewInstance(int number) {
+        FragmentContacts fragmentContacts = new FragmentContacts();
+        Bundle args = new Bundle();
+        args.putInt(EXTRA_NUMBER,number);
+        fragmentContacts.setArguments(args);
+        return fragmentContacts;
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        searchText = searchView.getQuery();
-        outState.putCharSequence("searchText", searchText);
+        if(searchView!=null) {
+            searchText = searchView.getQuery();
+            outState.putCharSequence("searchText", searchText);
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        MyApp.get().plusFragmentContactsComponent().inject(this);
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getCharSequence("searchText");
@@ -78,7 +99,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
 
     @ProvidePresenter
     ContactsPresenter provideContactsPresenter() {
-        return new ContactsPresenter(new ContactsProvider(getActivity().getContentResolver()));
+        return presenterProvider.get();
     }
 
     @Override
@@ -90,7 +111,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
 
     @Override
     public void setContacts(List<ShortContact> list) {
-        recyclerViewAdapter = new RecyclerViewAdapter();
+        recyclerViewAdapter = new RecyclerViewAdapter(router);
         recyclerViewAdapter.setData(list);
         myRecyclerView.setAdapter(recyclerViewAdapter);
     }
@@ -120,10 +141,13 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
         view = null;
         myRecyclerView.setAdapter(null);
         myRecyclerView = null;
-        searchView = null;
-        searchText = null;
     }
 
+    @Override
+    public void onDestroy() {
+        MyApp.get().clearFragmentContactsComponent();
+        super.onDestroy();
+    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -149,7 +173,6 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
             searchView.setQuery(searchText, false);
         }
 
-        // TODO пофиксить прогрузку при getcontacts, иначе не успевает отображаться поиск после поворота
-
+        // TODO поиск в SearchView отображается до загрузки контактов после поворота или возврата экрана
     }
 }
