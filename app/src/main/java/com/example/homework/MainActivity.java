@@ -19,12 +19,7 @@ public class MainActivity extends AppCompatActivity {
     @Inject
     NavigatorHolder navigatorHolder;
 
-    private Navigator navigator = new SupportAppNavigator(this, R.id.container) {
-        @Override
-        public void applyCommands(Command[] commands) {
-            super.applyCommands(commands);
-        }
-    };
+    private Navigator navigator = new SupportAppNavigator(this, R.id.container);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
