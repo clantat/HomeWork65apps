@@ -4,9 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
-import com.example.homework.request.RequestReadContact;
 import com.example.homework.domain.interactor.InfoInteractor;
 import com.example.homework.presentation.views.InfoView;
+import com.example.homework.request.RequestReadContact;
 
 import javax.inject.Inject;
 
@@ -17,9 +17,10 @@ import io.reactivex.schedulers.Schedulers;
 @InjectViewState
 public class InfoPresenter extends MvpPresenter<InfoView> {
     private Disposable disposable;
-    private String id;
-    private RequestReadContact requestReadContact;
-    private InfoInteractor infoInteractor;
+    private final String id;
+    private final RequestReadContact requestReadContact;
+    private final InfoInteractor infoInteractor;
+
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
@@ -50,7 +51,5 @@ public class InfoPresenter extends MvpPresenter<InfoView> {
         if (disposable != null) {
             disposable.dispose();
         }
-        id = null;
-        infoInteractor = null;
     }
 }

@@ -8,7 +8,6 @@ import java.util.List;
 import io.reactivex.Single;
 
 public interface ContactsProvider {
-    Single<List<ShortContact>> getContacts();
 
     Single<List<ShortContact>> getContacts(String searchText);
 

@@ -1,6 +1,6 @@
 package com.example.homework.domain.interactor;
 
-import com.example.homework.domain.repository.ContactsRepository;
+import com.example.homework.data.repository.ContactsRepository;
 import com.example.homework.domain.model.ShortContact;
 
 import java.util.List;
@@ -8,15 +8,10 @@ import java.util.List;
 import io.reactivex.Single;
 
 public class ContactsInteractorImpl implements ContactsInteractor {
-    private ContactsRepository contactsRepository;
+    private final ContactsRepository contactsRepository;
 
-    public ContactsInteractorImpl(ContactsRepository contactsRepository){
+    public ContactsInteractorImpl(ContactsRepository contactsRepository) {
         this.contactsRepository = contactsRepository;
-    }
-
-    @Override
-    public Single<List<ShortContact>> getContacts() {
-        return contactsRepository.getContacts();
     }
 
     @Override

@@ -22,17 +22,11 @@ import io.reactivex.Single;
 
 public class ContactsProviderImpl implements ContactsProvider {
 
-    private ContentResolver contentResolver;
+    private final ContentResolver contentResolver;
 
     @Inject
     public ContactsProviderImpl(ContentResolver contentResolver){
         this.contentResolver = contentResolver;
-    }
-
-    public Single<List<ShortContact>> getContacts() {
-        return getContactsObs()
-                .flatMapSingle(this::getShortContact)
-                .toList();
     }
 
     public Single<List<ShortContact>> getContacts(String searchText) {
@@ -49,23 +43,6 @@ public class ContactsProviderImpl implements ContactsProvider {
 
     private Single<ShortContact> getShortContact(String Id) {
         return Single.fromCallable(() -> new ShortContact(Id, getNameF(Id), getPhoneF(Id)));
-    }
-
-    private Observable<String> getContactsObs() {
-        return Observable.create(e -> {
-            Cursor cursor = contentResolver
-                    .query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-            if (cursor != null)
-                try {
-                    while (cursor.moveToNext()) {
-                        e.onNext(cursor.getString(cursor
-                                .getColumnIndex(ContactsContract.Contacts._ID)));
-                    }
-                } finally {
-                    cursor.close();
-                }
-            e.onComplete();
-        });
     }
 
     private Observable<String> searchName(String searchText) {

@@ -110,7 +110,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     @Override
     public void onRequestPermission(RequestPermissionFragment requestPermissionFragment) {
         if (requestPermissionFragment.doRequestPermission(this)) {
-            contactsPresenter.getContacts();
+            contactsPresenter.getContacts("");
         }
     }
 
@@ -135,7 +135,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (contactsPresenter.getRequestReadContact().onRequestPermissionResult(requestCode, grantResults)) {
-            contactsPresenter.getContacts();
+            contactsPresenter.getContacts("");
         } else
             Toast.makeText(getActivity(), "Второго шанса не будет", Toast.LENGTH_LONG).show();
     }
@@ -177,7 +177,5 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
             searchItem.expandActionView();
             searchView.setQuery(searchText, false);
         }
-
-        // TODO поиск в SearchView отображается до загрузки контактов после поворота или возврата экрана
     }
 }

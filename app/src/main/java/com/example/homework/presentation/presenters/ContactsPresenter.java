@@ -6,9 +6,9 @@ import androidx.annotation.NonNull;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
-import com.example.homework.request.RequestReadContact;
 import com.example.homework.domain.interactor.ContactsInteractor;
 import com.example.homework.presentation.views.ContactsView;
+import com.example.homework.request.RequestReadContact;
 
 import javax.inject.Inject;
 
@@ -20,9 +20,9 @@ import io.reactivex.schedulers.Schedulers;
 @InjectViewState
 public class ContactsPresenter extends MvpPresenter<ContactsView> {
     private CompositeDisposable compositeDisposable;
-    private RequestReadContact requestReadContact;
+    private final RequestReadContact requestReadContact;
     private Disposable disposableSearch;
-    private ContactsInteractor contactsInteractor;
+    private final ContactsInteractor contactsInteractor;
 
     @Inject
     public ContactsPresenter(@NonNull ContactsInteractor contactsInteractor) {
@@ -42,18 +42,6 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
         return this.requestReadContact;
     }
 
-    public void getContacts() {
-        if (requestReadContact.getReadContactPermission())
-            compositeDisposable.add(contactsInteractor.getContacts()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnSubscribe(__ -> getViewState().showLoading())
-                    .doOnSuccess(__ -> getViewState().hideLoading())
-                    .subscribe(__ -> getViewState().setContacts(__)
-                    ));
-        else getViewState().onRequestPermission(requestReadContact);
-    }
-
     public void getContacts(String searchText) {
         if (requestReadContact.getReadContactPermission())
             if (!TextUtils.isEmpty(searchText)) {
@@ -62,7 +50,15 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(__ -> getViewState().setContacts(__));
-            } else getContacts();
+            } else {
+                disposableSearch = contactsInteractor.getContacts("")
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnSubscribe(__ -> getViewState().showLoading())
+                        .doOnSuccess(__ -> getViewState().hideLoading())
+                        .doOnDispose(() -> getViewState().hideLoading())
+                        .subscribe(__ -> getViewState().setContacts(__));
+            }
         else getViewState().onRequestPermission(requestReadContact);
     }
 
@@ -72,6 +68,5 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
         super.onDestroy();
         if (disposableSearch != null) disposableSearch.dispose();
         if (compositeDisposable != null) compositeDisposable.dispose();
-        contactsInteractor = null;
     }
 }
