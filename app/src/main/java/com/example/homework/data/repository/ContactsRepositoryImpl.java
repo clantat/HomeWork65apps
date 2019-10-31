@@ -3,6 +3,7 @@ package com.example.homework.data.repository;
 import com.example.homework.data.provider.ContactsProvider;
 import com.example.homework.domain.model.Contact;
 import com.example.homework.domain.model.ShortContact;
+import com.example.homework.domain.repository.ContactsRepository;
 
 import java.util.List;
 

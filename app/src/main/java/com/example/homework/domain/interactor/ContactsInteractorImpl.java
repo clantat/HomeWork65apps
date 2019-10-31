@@ -1,6 +1,6 @@
 package com.example.homework.domain.interactor;
 
-import com.example.homework.data.repository.ContactsRepository;
+import com.example.homework.domain.repository.ContactsRepository;
 import com.example.homework.domain.model.ShortContact;
 
 import java.util.List;

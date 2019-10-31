@@ -49,7 +49,7 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
                 disposableSearch = contactsInteractor.getContacts(searchText)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(__ -> getViewState().setContacts(__));
+                        .subscribe(list -> getViewState().setContacts(list));
             } else {
                 disposableSearch = contactsInteractor.getContacts("")
                         .subscribeOn(Schedulers.io())
@@ -57,7 +57,7 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
                         .doOnSubscribe(__ -> getViewState().showLoading())
                         .doOnSuccess(__ -> getViewState().hideLoading())
                         .doOnDispose(() -> getViewState().hideLoading())
-                        .subscribe(__ -> getViewState().setContacts(__));
+                        .subscribe(list -> getViewState().setContacts(list));
             }
         else getViewState().onRequestPermission(requestReadContact);
     }

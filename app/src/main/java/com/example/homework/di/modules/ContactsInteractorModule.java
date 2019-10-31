@@ -1,7 +1,7 @@
 package com.example.homework.di.modules;
 
 import com.example.homework.domain.interactor.ContactsInteractorImpl;
-import com.example.homework.data.repository.ContactsRepository;
+import com.example.homework.domain.repository.ContactsRepository;
 import com.example.homework.di.scopes.ContactsScreenScope;
 import com.example.homework.domain.interactor.ContactsInteractor;
 

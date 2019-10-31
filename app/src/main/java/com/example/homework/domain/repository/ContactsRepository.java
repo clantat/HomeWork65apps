@@ -1,4 +1,4 @@
-package com.example.homework.data.repository;
+package com.example.homework.domain.repository;
 
 import com.example.homework.domain.model.Contact;
 import com.example.homework.domain.model.ShortContact;
