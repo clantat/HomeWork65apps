@@ -14,10 +14,10 @@ import io.reactivex.Single;
 @Dao
 public interface ContactDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertContact(Contact contact);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertAll(List<Contact> contacts);
 
     @Query("SELECT * FROM Contact WHERE Contact.Id = :shortContactId")
