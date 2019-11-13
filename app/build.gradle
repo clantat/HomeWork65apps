@@ -57,4 +57,17 @@ dependencies {
 
     //Cicerone
     implementation 'ru.terrakok.cicerone:cicerone:5.0.0'
+
+    //Room database
+
+    def room_version = "2.2.1"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    // optional - RxJava support for Room
+    implementation "androidx.room:room-rxjava2:$room_version"
+
+    // Test helpers
+    testImplementation "androidx.room:room-testing:$room_version"
 }

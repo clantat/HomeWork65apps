@@ -97,6 +97,8 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.VERTICAL);
         dividerItemDecoration.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(getContext(), R.drawable.contacts_divider)));
         myRecyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerViewAdapter = new RecyclerViewAdapter(router);
+        myRecyclerView.setAdapter(recyclerViewAdapter);
         setHasOptionsMenu(true);
 
         return view;

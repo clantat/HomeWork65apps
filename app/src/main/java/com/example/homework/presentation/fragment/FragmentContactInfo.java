@@ -92,7 +92,7 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
         nameView.setText(contact.getName());
         phoneView.setText(contact.getPhone());
         emailView.setText(contact.getEmail());
-        imageView.setImageBitmap(contact.getmBitmap());
+        imageView.setImageBitmap(contact.getBitmap());
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.example.homework.domain.interactor.InfoInteractor;
 import com.example.homework.presentation.fragment.FragmentContactInfo;
 import com.example.homework.presentation.presenters.InfoPresenter;
 import com.example.homework.di.scopes.ContactInfoScreenScope;
+import com.example.homework.room.AppDatabase;
 
 import java.util.Objects;
 
@@ -25,8 +26,8 @@ public class InfoPresenterModule {
 
     @ContactInfoScreenScope
     @Provides
-    InfoPresenter provideInfoPresenter(InfoInteractor infoInteractor, @Named("contact_id") String id) {
-        return new InfoPresenter(infoInteractor,id);
+    InfoPresenter provideInfoPresenter(AppDatabase appDatabase, InfoInteractor infoInteractor, @Named("contact_id") String id) {
+        return new InfoPresenter(appDatabase, infoInteractor, id);
     }
 
     @ContactInfoScreenScope

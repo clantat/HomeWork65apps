@@ -1,32 +1,61 @@
 package com.example.homework.domain.model;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
+
+import java.io.ByteArrayInputStream;
+
+@Entity
 public class Contact {
+    @NonNull
+    @PrimaryKey
     private String Id;
     private String Name;
     private String Phone;
     private String Email;
-    private Bitmap mBitmap;
+    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
+    private byte[] imageBites;
+    private long Coordination;
 
+    public Contact() {
+    }
 
-    public Contact(String id, String name, String phone, String email, Bitmap bitmap) {
+    public Contact(@NonNull String id, String name, String phone, String email, byte[] image) {
         Id = id;
         Name = name;
         Phone = phone;
         Email = email;
-        mBitmap = bitmap;
+        imageBites = image;
     }
 
+
     //Getter
-    public Bitmap getmBitmap() {
-        return mBitmap;
+
+    public Bitmap getBitmap() {
+        if (this.imageBites != null)
+            return BitmapFactory.decodeStream(new ByteArrayInputStream(this.imageBites));
+        else return null;
+    }
+
+    public long getCoordination() {
+        return Coordination;
+    }
+
+    public byte[] getImageBites() {
+        return this.imageBites;
     }
 
     public String getName() {
         return Name;
     }
 
+    @NonNull
     public String getId() {
         return Id;
     }
@@ -42,9 +71,12 @@ public class Contact {
 
     //Setter
 
+    public void setCoordination(long coordination) {
+        Coordination = coordination;
+    }
 
-    public void setmBitmap(Bitmap mBitmap) {
-        this.mBitmap = mBitmap;
+    public void setImageBites(byte[] bytes) {
+        imageBites = bytes;
     }
 
     public void setName(String name) {
@@ -59,7 +91,7 @@ public class Contact {
         Email = email;
     }
 
-    public void setId(String id) {
+    public void setId(@NonNull String id) {
         Id = id;
     }
 }

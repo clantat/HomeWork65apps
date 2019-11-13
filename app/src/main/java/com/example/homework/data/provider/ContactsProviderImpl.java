@@ -37,7 +37,7 @@ public class ContactsProviderImpl implements ContactsProvider {
 
     public Single<Contact> getInfoContact(String Id) {
         return Single.fromCallable(() -> new Contact(Id, getNameF(Id), getPhoneF(Id),
-                getEmailF(Id), BitmapFactory.decodeStream(openPhoto(Id))));
+                getEmailF(Id), openPhoto(Id)));
     }
 
 
@@ -135,7 +135,7 @@ public class ContactsProviderImpl implements ContactsProvider {
         return null;
     }
 
-    private InputStream openPhoto(String contactId) {
+    private byte[] openPhoto(String contactId) {
         Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.parseLong(contactId));
         Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
         Cursor cursor = contentResolver.query(photoUri,
@@ -147,7 +147,7 @@ public class ContactsProviderImpl implements ContactsProvider {
             if (cursor.moveToFirst()) {
                 byte[] data = cursor.getBlob(0);
                 if (data != null) {
-                    return new ByteArrayInputStream(data);
+                    return data;
                 }
             }
         } finally {
