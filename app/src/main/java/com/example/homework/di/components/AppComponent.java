@@ -11,13 +11,16 @@ import com.example.homework.di.modules.ContactsPresenterModule;
 import com.example.homework.di.modules.ContentResolverModule;
 import com.example.homework.di.modules.InfoPresenterModule;
 import com.example.homework.di.modules.NavigationModule;
+import com.example.homework.di.modules.SchedulersModule;
+import com.example.homework.schedulers.SchedulerManager;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
 
 @Component(modules = {AppModule.class, ContentResolverModule.class,
-        ContactsProviderModule.class, NavigationModule.class, ContactsRepositoryModule.class})
+        ContactsProviderModule.class, NavigationModule.class,
+        ContactsRepositoryModule.class, SchedulersModule.class})
 @Singleton
 public interface AppComponent {
 
