@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.homework.presentation.fragment.FragmentContactInfo;
 import com.example.homework.presentation.fragment.FragmentContacts;
+import com.example.homework.presentation.fragment.MapFragment;
 
 import ru.terrakok.cicerone.android.support.SupportAppScreen;
 
@@ -33,6 +34,19 @@ public class Screens {
         @Override
         public Fragment getFragment() {
             return FragmentContactInfo.newInstance(id, number);
+        }
+    }
+
+    public static final class MapScreen extends SupportAppScreen {
+        private final int number;
+
+        public MapScreen(int number) {
+            this.number = number;
+        }
+
+        @Override
+        public Fragment getFragment() {
+            return MapFragment.newInstance(number);
         }
     }
 }

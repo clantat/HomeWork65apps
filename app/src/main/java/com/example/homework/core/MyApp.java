@@ -6,11 +6,13 @@ import com.example.homework.di.components.AppComponent;
 import com.example.homework.di.components.DaggerAppComponent;
 import com.example.homework.di.components.FragmentContactsComponent;
 import com.example.homework.di.components.FragmentInfoComponent;
+import com.example.homework.di.components.FragmentMapComponent;
 import com.example.homework.di.modules.AppModule;
 import com.example.homework.di.modules.ContactsInteractorModule;
 import com.example.homework.di.modules.ContactsPresenterModule;
 import com.example.homework.di.modules.InfoInteractorModule;
 import com.example.homework.di.modules.InfoPresenterModule;
+import com.example.homework.di.modules.MapPresenterModule;
 import com.example.homework.presentation.fragment.FragmentContactInfo;
 
 public class MyApp extends Application {
@@ -21,6 +23,7 @@ public class MyApp extends Application {
     private AppComponent appComponent;
     private FragmentContactsComponent fragmentContactsComponent;
     private FragmentInfoComponent fragmentInfoComponent;
+    private FragmentMapComponent fragmentMapComponent;
 
     public static MyApp get() {
         return instance;
@@ -61,6 +64,16 @@ public class MyApp extends Application {
 
     public void clearFragmentInfoComponent() {
         fragmentInfoComponent = null;
+    }
+
+    public FragmentMapComponent plusFragmentMapComponent() {
+        if (fragmentMapComponent == null)
+            fragmentMapComponent = appComponent.plusFragmentMapComponent(new MapPresenterModule());
+        return fragmentMapComponent;
+    }
+
+    public void clearFragmentMapComponent() {
+        fragmentMapComponent = null;
     }
 
 }

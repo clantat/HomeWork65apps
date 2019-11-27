@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +15,7 @@ import androidx.annotation.Nullable;
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.example.homework.core.Screens;
 import com.example.homework.domain.model.Contact;
 import com.example.homework.core.MyApp;
 import com.example.homework.R;
@@ -24,18 +26,22 @@ import com.example.homework.presentation.views.InfoView;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import ru.terrakok.cicerone.Router;
+
 public class FragmentContactInfo extends MvpAppCompatFragment implements InfoView {
     private static final String EXTRA_NUMBER = "extra_number";
     @Inject
     Provider<InfoPresenter> infoPresenterProvider;
     @InjectPresenter
     InfoPresenter infoPresenter;
-
+    @Inject
+    Router router;
     private View view;
     private TextView nameView;
     private TextView phoneView;
     private TextView emailView;
     private ImageView imageView;
+    private Button button;
 
     public FragmentContactInfo() {
     }
@@ -54,6 +60,10 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
         phoneView = view.findViewById(R.id.info_phone_id);
         emailView = view.findViewById(R.id.info_email_id);
         imageView = view.findViewById(R.id.info_image);
+        button = view.findViewById(R.id.map_btn);
+        button.setOnClickListener(view -> {
+            router.navigateTo(new Screens.MapScreen(3));
+        });
         return view;
     }
 
@@ -110,4 +120,5 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
         else
             Toast.makeText(getActivity(), "Третьего шанса не будет", Toast.LENGTH_LONG).show();
     }
+
 }
