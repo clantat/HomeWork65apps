@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.1"
     defaultConfig {
         applicationId "com.example.homework"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -77,5 +77,11 @@ dependencies {
     // GSON
     implementation 'com.google.code.gson:gson:2.8.6'
 
+    // Google maps
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
+    // Material search bar for google maps
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.2'
+
+    implementation 'com.google.android.libraries.places:places:2.1.0'
 }

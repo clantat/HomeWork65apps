@@ -6,7 +6,6 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.example.homework.domain.interactor.ContactsInteractor;
 import com.example.homework.presentation.views.ContactsView;
-import com.example.homework.request.RequestPermissionFragment;
 import com.example.homework.request.RequestReadContact;
 import com.example.homework.schedulers.SchedulerManager;
 
@@ -70,7 +69,7 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
         if (compositeDisposable != null) compositeDisposable.dispose();
     }
 
-    void setRequestReadContact(RequestReadContact requestReadContact){
+    void setRequestReadContact(RequestReadContact requestReadContact) {
         this.requestReadContact = requestReadContact;
     }
 }

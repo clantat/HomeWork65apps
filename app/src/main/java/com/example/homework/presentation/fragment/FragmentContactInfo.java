@@ -15,18 +15,15 @@ import androidx.annotation.Nullable;
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
-import com.example.homework.core.Screens;
-import com.example.homework.domain.model.Contact;
-import com.example.homework.core.MyApp;
 import com.example.homework.R;
-import com.example.homework.request.RequestPermissionFragment;
+import com.example.homework.core.MyApp;
+import com.example.homework.domain.model.Contact;
 import com.example.homework.presentation.presenters.InfoPresenter;
 import com.example.homework.presentation.views.InfoView;
+import com.example.homework.request.RequestPermissionFragment;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-
-import ru.terrakok.cicerone.Router;
 
 public class FragmentContactInfo extends MvpAppCompatFragment implements InfoView {
     private static final String EXTRA_NUMBER = "extra_number";
@@ -34,8 +31,6 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
     Provider<InfoPresenter> infoPresenterProvider;
     @InjectPresenter
     InfoPresenter infoPresenter;
-    @Inject
-    Router router;
     private View view;
     private TextView nameView;
     private TextView phoneView;
@@ -61,9 +56,7 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
         emailView = view.findViewById(R.id.info_email_id);
         imageView = view.findViewById(R.id.info_image);
         button = view.findViewById(R.id.map_btn);
-        button.setOnClickListener(view -> {
-            router.navigateTo(new Screens.MapScreen(3));
-        });
+        button.setOnClickListener(__ -> infoPresenter.clickMapButton());
         return view;
     }
 
@@ -75,6 +68,7 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
         phoneView = null;
         emailView = null;
         imageView = null;
+        button = null;
     }
 
     @Override
@@ -91,7 +85,7 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
     public static FragmentContactInfo newInstance(String id, int number) {
         FragmentContactInfo myFragment = new FragmentContactInfo();
         Bundle bundle = new Bundle();
-        bundle.putInt(EXTRA_NUMBER,number);
+        bundle.putInt(EXTRA_NUMBER, number);
         bundle.putString("id", id);
         myFragment.setArguments(bundle);
         return myFragment;

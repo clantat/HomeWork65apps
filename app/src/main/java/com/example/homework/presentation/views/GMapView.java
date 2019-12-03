@@ -6,8 +6,9 @@ import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.example.homework.request.RequestPermissionFragment;
 
-public interface MapView extends MvpView {
-//    @StateStrategyType(OneExecutionStateStrategy.class)
-//    void onRequestPermission(RequestPermissionFragment requestPermissionFragment);
+public interface GMapView extends MvpView {
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void onRequestPermission(RequestPermissionFragment requestPermissionFragment);
+    void mapAsync();
 
 }

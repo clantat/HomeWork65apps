@@ -14,6 +14,7 @@ import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
+import ru.terrakok.cicerone.Router;
 
 @Module
 public class InfoPresenterModule {
@@ -26,8 +27,8 @@ public class InfoPresenterModule {
 
     @ContactInfoScreenScope
     @Provides
-    InfoPresenter provideInfoPresenter(InfoInteractor infoInteractor, @Named("contact_id") String id, SchedulerManager schedulerManager) {
-        return new InfoPresenter(infoInteractor,id, schedulerManager);
+    InfoPresenter provideInfoPresenter(InfoInteractor infoInteractor, @Named("contact_id") String id, SchedulerManager schedulerManager, Router router) {
+        return new InfoPresenter(infoInteractor,id, schedulerManager, router);
     }
 
     @ContactInfoScreenScope

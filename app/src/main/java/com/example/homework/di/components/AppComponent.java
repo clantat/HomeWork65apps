@@ -10,9 +10,10 @@ import com.example.homework.di.modules.ContactsRepositoryModule;
 import com.example.homework.di.modules.ContentResolverModule;
 import com.example.homework.di.modules.InfoInteractorModule;
 import com.example.homework.di.modules.InfoPresenterModule;
+import com.example.homework.di.modules.MapDatabaseModule;
 import com.example.homework.di.modules.MapPresenterModule;
 import com.example.homework.di.modules.NavigationModule;
-import com.example.homework.di.modules.RetrofitModule;
+import com.example.homework.di.modules.GeoCodeNetworkModule;
 import com.example.homework.di.modules.SchedulersModule;
 
 import javax.inject.Singleton;
@@ -21,7 +22,7 @@ import dagger.Component;
 
 @Component(modules = {AppModule.class, ContentResolverModule.class,
         ContactsProviderModule.class, NavigationModule.class,
-        ContactsRepositoryModule.class, SchedulersModule.class, RetrofitModule.class})
+        ContactsRepositoryModule.class, SchedulersModule.class, MapDatabaseModule.class})
 @Singleton
 public interface AppComponent {
 

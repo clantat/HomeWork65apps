@@ -39,14 +39,15 @@ public class Screens {
 
     public static final class MapScreen extends SupportAppScreen {
         private final int number;
-
-        public MapScreen(int number) {
+        private final String id;
+        public MapScreen(int number, String id) {
             this.number = number;
+            this.id = id;
         }
 
         @Override
         public Fragment getFragment() {
-            return MapFragment.newInstance(number);
+            return MapFragment.newInstance(number,id);
         }
     }
 }
