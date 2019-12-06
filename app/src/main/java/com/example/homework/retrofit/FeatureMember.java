@@ -3,18 +3,16 @@ package com.example.homework.retrofit;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 public class FeatureMember {
-    @SerializedName("featureMember")
+    @SerializedName("GeoObject")
     @Expose
-    private List<GeoObject> geoObjectList;
+    private GeoObject geoObject;
 
-    public List<GeoObject> getGeoObjectList() {
-        return geoObjectList;
+    public GeoObject getGeoObject() {
+        return geoObject;
     }
 
-    public void setGeoObjectList(List<GeoObject> geoObjectList) {
-        this.geoObjectList = geoObjectList;
+    public void setGeoObject(GeoObject geoObject) {
+        this.geoObject = geoObject;
     }
 }

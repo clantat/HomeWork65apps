@@ -9,7 +9,6 @@ public class GeoObject {
     @Expose
     private String address;
 
-
     public String getAddress() {
         return address;
     }

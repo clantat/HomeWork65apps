@@ -1,6 +1,7 @@
 package com.example.homework.core;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.example.homework.di.components.AppComponent;
 import com.example.homework.di.components.DaggerAppComponent;
@@ -12,7 +13,12 @@ import com.example.homework.di.modules.ContactsInteractorModule;
 import com.example.homework.di.modules.ContactsPresenterModule;
 import com.example.homework.di.modules.InfoInteractorModule;
 import com.example.homework.di.modules.InfoPresenterModule;
-import com.example.homework.di.modules.MapPresenterModule;
+import com.example.homework.di.modules.mapscreen.GeoCodingServiceModule;
+import com.example.homework.di.modules.mapscreen.MapContactProviderModule;
+import com.example.homework.di.modules.mapscreen.MapDatabaseModule;
+import com.example.homework.di.modules.mapscreen.MapInteractorModule;
+import com.example.homework.di.modules.mapscreen.MapPresenterModule;
+import com.example.homework.di.modules.mapscreen.MapRepositoryModule;
 import com.example.homework.presentation.fragment.FragmentContactInfo;
 
 public class MyApp extends Application {
@@ -68,7 +74,13 @@ public class MyApp extends Application {
 
     public FragmentMapComponent plusFragmentMapComponent() {
         if (fragmentMapComponent == null)
-            fragmentMapComponent = appComponent.plusFragmentMapComponent(new MapPresenterModule());
+            fragmentMapComponent = appComponent.plusFragmentMapComponent(
+                    new MapPresenterModule(),
+                    new GeoCodingServiceModule(),
+                    new MapContactProviderModule(),
+                    new MapRepositoryModule(),
+                    new MapInteractorModule(),
+                    new MapDatabaseModule());
         return fragmentMapComponent;
     }
 

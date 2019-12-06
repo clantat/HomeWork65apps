@@ -3,11 +3,14 @@ package com.example.homework.data.provider;
 import com.example.homework.data.room.MapContact;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.List;
+
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 public interface MapContactProvider {
-    Single<Boolean> isMapContactCreated(String id);
-    void addMapContact(String id, LatLng coordination,String address);
-    void updateMapContact(String id, LatLng coordination,String address);
+    Completable addMapContact(String id, LatLng coordination, String address);
     Single<MapContact> getMapContact(String id);
+    Single<String> getAddress(LatLng coordination);
+    Single<List<MapContact>> getAllMapContact();
 }

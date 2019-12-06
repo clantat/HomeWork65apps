@@ -6,19 +6,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.fragment.MapFragment">
 
-    <com.mancj.materialsearchbar.MaterialSearchBar
-        style="@style/MaterialSearchBarLight"
-        android:id="@+id/searchBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:mt_hint="Search a place"
-        app:mt_maxSuggestionsCount="10"
-        app:mt_navIconEnabled="true"
-        app:mt_placeholder="Search a place"
-        android:elevation="5dp"
-        android:outlineProvider="bounds"
-        app:mt_speechMode="false" />
+<!--    <com.mancj.materialsearchbar.MaterialSearchBar-->
+<!--        style="@style/MaterialSearchBarLight"-->
+<!--        android:id="@+id/searchBar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="16dp"-->
+<!--        app:mt_hint="Search a place"-->
+<!--        app:mt_maxSuggestionsCount="10"-->
+<!--        app:mt_navIconEnabled="true"-->
+<!--        app:mt_placeholder="Search a place"-->
+<!--        android:elevation="5dp"-->
+<!--        android:outlineProvider="bounds"-->
+<!--        app:mt_speechMode="false" />-->
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"

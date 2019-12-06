@@ -22,6 +22,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import javax.inject.Inject;
@@ -38,6 +39,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
     private View view;
     private GoogleMap map;
     private MapView mapView;
+    private Marker coordinationMarker;
     private View locationButton;
     private MarkerOptions markerOptions;
     private CameraPosition lastCameraPosition;
@@ -64,14 +66,13 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         view = inflater.inflate(R.layout.map_fragment, container, false);
         mapView = view.findViewById(R.id.map);
         if (savedInstanceState != null) {
-            lastCameraPosition = new CameraPosition(
-                    new LatLng(savedInstanceState.getDouble("cameraLatitude"),
-                            savedInstanceState.getDouble("cameraLongitude")),
-                    savedInstanceState.getFloat("cameraZoom"),
-                    savedInstanceState.getFloat("cameraTilt"),
-                    savedInstanceState.getFloat("cameraBearing")
-            );
-
+            lastCameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(savedInstanceState.getDouble("cameraLatitude"),
+                            savedInstanceState.getDouble("cameraLongitude")))
+                    .zoom(savedInstanceState.getFloat("cameraZoom"))
+                    .bearing(savedInstanceState.getFloat("cameraBearing"))
+                    .tilt(savedInstanceState.getFloat("cameraTilt"))
+                    .build();
         }
         mapView.onCreate(savedInstanceState);
         return view;
@@ -92,11 +93,36 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
+        map.setMyLocationEnabled(true);
+        map.getUiSettings().setMyLocationButtonEnabled(true);
+        map.setOnMapClickListener(LatLng -> mapPresenter.clickOnMap(LatLng));
         if (lastCameraPosition != null)
             map.moveCamera(CameraUpdateFactory.newCameraPosition(lastCameraPosition));
         else
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(mapPresenter.startLocation(), 12));
+    }
 
+    @Override
+    public void addMarker(LatLng latLng) {
+        if (map != null)
+            map.addMarker(markerOptions.position(latLng).draggable(true));
+    }
+
+    @Override
+    public void addMarker(LatLng latLng, String title) {
+        if (map != null)
+            coordinationMarker = map.addMarker(markerOptions.position(latLng).draggable(true).title(title));
+            coordinationMarker.showInfoWindow();
+    }
+
+    @Override
+    public void mapAsync() {
+        mapView.getMapAsync(this);
+    }
+
+    @Override
+    public void onError(String msg) {
+        Toast.makeText(this.getContext(),msg,Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -104,11 +130,6 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         if (requestPermissionFragment.doRequestPermission(this)) {
             mapPresenter.mapCreated();
         }
-    }
-
-    @Override
-    public void mapAsync() {
-        mapView.getMapAsync(this);
     }
 
     @Override
