@@ -35,4 +35,9 @@ public class MapInteractorImpl implements MapInteractor {
     public Single<List<MapContact>> getAllMapContact() {
         return mapRepository.getAllMapContact();
     }
+
+    @Override
+    public LatLng getCurrentLocation() {
+        return new LatLng(56.8497581, 53.2044792);
+    }
 }

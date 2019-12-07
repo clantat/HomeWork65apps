@@ -20,6 +20,7 @@ import com.example.homework.di.modules.mapscreen.MapInteractorModule;
 import com.example.homework.di.modules.mapscreen.MapPresenterModule;
 import com.example.homework.di.modules.mapscreen.MapRepositoryModule;
 import com.example.homework.presentation.fragment.FragmentContactInfo;
+import com.example.homework.presentation.fragment.MapFragment;
 
 public class MyApp extends Application {
     protected static MyApp instance;
@@ -72,10 +73,10 @@ public class MyApp extends Application {
         fragmentInfoComponent = null;
     }
 
-    public FragmentMapComponent plusFragmentMapComponent() {
+    public FragmentMapComponent plusFragmentMapComponent(MapFragment mapFragment) {
         if (fragmentMapComponent == null)
             fragmentMapComponent = appComponent.plusFragmentMapComponent(
-                    new MapPresenterModule(),
+                    new MapPresenterModule(mapFragment),
                     new GeoCodingServiceModule(),
                     new MapContactProviderModule(),
                     new MapRepositoryModule(),

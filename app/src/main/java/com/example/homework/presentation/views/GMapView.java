@@ -10,9 +10,15 @@ import com.google.android.gms.maps.model.LatLng;
 public interface GMapView extends MvpView {
     @StateStrategyType(OneExecutionStateStrategy.class)
     void onRequestPermission(RequestPermissionFragment requestPermissionFragment);
-    void addMarker(LatLng latLng);
+
+    void addCurrentAddressMarker(LatLng latLng, String address);
+
     void addMarker(LatLng latLng, String title);
+
     void mapAsync();
+
     void onError(String msg);
+
+    void currentLocation(LatLng latLng);
 
 }

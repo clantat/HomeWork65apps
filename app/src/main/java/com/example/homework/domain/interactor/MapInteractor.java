@@ -13,5 +13,6 @@ public interface MapInteractor {
     Completable setMapContact(String id, LatLng latLng, String address);
     Single<String> getAddress(LatLng coordination);
     Single<List<MapContact>> getAllMapContact();
+    LatLng getCurrentLocation();
     //TODO add current location function
 }

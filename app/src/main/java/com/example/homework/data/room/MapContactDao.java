@@ -15,7 +15,7 @@ public interface MapContactDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insertMapContact(MapContact mapContact);
 
-    @Query("SELECT * FROM MapContact WHERE MapContact.id LIKE :contactId")
+    @Query("SELECT * FROM MapContact WHERE id = :contactId")
     Single<MapContact> getMapContact(String contactId);
 
     @Query("SELECT * FROM MapContact")

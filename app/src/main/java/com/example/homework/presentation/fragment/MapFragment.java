@@ -40,6 +40,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
     private GoogleMap map;
     private MapView mapView;
     private Marker coordinationMarker;
+    private Marker currentAddressMarker;
     private View locationButton;
     private MarkerOptions markerOptions;
     private CameraPosition lastCameraPosition;
@@ -55,7 +56,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        MyApp.get().plusFragmentMapComponent().inject(this);
+        MyApp.get().plusFragmentMapComponent(this).inject(this);
         super.onCreate(savedInstanceState);
         markerOptions = new MarkerOptions();
     }
@@ -96,22 +97,40 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(true);
         map.setOnMapClickListener(LatLng -> mapPresenter.clickOnMap(LatLng));
-        if (lastCameraPosition != null)
+        if (lastCameraPosition != null) {
+            mapPresenter.addCurrentContactAddress();
             map.moveCamera(CameraUpdateFactory.newCameraPosition(lastCameraPosition));
-        else
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(mapPresenter.startLocation(), 12));
+        } else
+            mapPresenter.startLocation();
     }
 
     @Override
-    public void addMarker(LatLng latLng) {
+    public void addCurrentAddressMarker(LatLng latLng, String address) {
         if (map != null)
-            map.addMarker(markerOptions.position(latLng).draggable(true));
+            if (currentAddressMarker == null) {
+                currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Current address: " + address));
+                currentAddressMarker.showInfoWindow();
+            } else {
+                currentAddressMarker.remove();
+                currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Current address: " + address));
+                currentAddressMarker.showInfoWindow();
+            }
     }
 
     @Override
     public void addMarker(LatLng latLng, String title) {
-        if (map != null)
-            coordinationMarker = map.addMarker(markerOptions.position(latLng).draggable(true).title(title));
+        if (map != null) {
+            if (coordinationMarker != null) {
+                coordinationMarker.remove();
+                coordinationMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title(title));
+            } else
+                coordinationMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title(title));
+            if (currentAddressMarker != null)
+                currentAddressMarker.remove();
+            //TODO добавить галочку подтверждения
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
+        }
+        if (coordinationMarker != null)
             coordinationMarker.showInfoWindow();
     }
 
@@ -122,7 +141,13 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
 
     @Override
     public void onError(String msg) {
-        Toast.makeText(this.getContext(),msg,Toast.LENGTH_LONG).show();
+        Toast.makeText(this.getContext(), msg, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void currentLocation(LatLng latLng) {
+        if (map != null)
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
     }
 
     @Override
