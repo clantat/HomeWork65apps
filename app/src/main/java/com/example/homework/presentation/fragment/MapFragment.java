@@ -1,7 +1,6 @@
 package com.example.homework.presentation.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +36,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMapReadyCallback {
     private static final String EXTRA_NUMBER = "extra_number";
@@ -177,10 +174,10 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
         allContactsMarkerList = new ArrayList<>();
         if (map != null) {
-                for (int i = 0; i < allContactsMarkerList.size(); i++) {
-                    allContactsMarkerList.get(i).setVisible(false);
-                    allContactsMarkerList.get(i).remove();
-                }
+            for (int i = 0; i < allContactsMarkerList.size(); i++) {
+                allContactsMarkerList.get(i).setVisible(false);
+                allContactsMarkerList.get(i).remove();
+            }
             for (int i = 0; i < mapContactList.size(); i++) {
                 Marker allContactsMarker = map.addMarker(markerOptions.position(new LatLng(mapContactList.get(i).getLat(), mapContactList.get(i).getLng()))
                         .title(mapContactList.get(i).getAddress()));
