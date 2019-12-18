@@ -44,6 +44,7 @@
 
     <Button
         android:id="@+id/map_btn"
+        android:text="Change address"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:padding="10dp"

@@ -4,6 +4,8 @@ import com.example.homework.data.provider.MapContactProvider;
 import com.example.homework.data.room.MapContact;
 import com.example.homework.domain.repository.MapRepository;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 
@@ -35,6 +37,16 @@ public class MapRepositoryImpl implements MapRepository {
     @Override
     public Single<List<MapContact>> getAllMapContact() {
         return mapContactProvider.getAllMapContact();
+    }
+
+    @Override
+    public Single<LatLng> getCurrentLocation() {
+        return mapContactProvider.getCurrentLocation();
+    }
+
+    @Override
+    public Single<PolylineOptions> getPolyline(LatLng origin, LatLng direction) {
+        return mapContactProvider.getPolyline(origin,direction);
     }
 
 }

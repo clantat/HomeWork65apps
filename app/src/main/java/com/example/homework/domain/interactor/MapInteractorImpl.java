@@ -3,6 +3,8 @@ package com.example.homework.domain.interactor;
 import com.example.homework.data.room.MapContact;
 import com.example.homework.domain.repository.MapRepository;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 
@@ -37,7 +39,12 @@ public class MapInteractorImpl implements MapInteractor {
     }
 
     @Override
-    public LatLng getCurrentLocation() {
-        return new LatLng(56.8497581, 53.2044792);
+    public Single<LatLng> getCurrentLocation() {
+        return mapRepository.getCurrentLocation();
+    }
+
+    @Override
+    public Single<PolylineOptions> setDirection(LatLng origin, LatLng direction) {
+        return mapRepository.getPolyline(origin,direction);
     }
 }

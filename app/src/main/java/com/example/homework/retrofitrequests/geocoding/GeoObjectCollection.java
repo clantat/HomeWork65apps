@@ -1,4 +1,4 @@
-package com.example.homework.retrofit;
+package com.example.homework.retrofitrequests.geocoding;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

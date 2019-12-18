@@ -1,4 +1,4 @@
-package com.example.homework.retrofit;
+package com.example.homework.retrofitrequests.geocoding;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -7,15 +7,18 @@ import io.reactivex.Single;
 public class GeoCodingService {
     private YandexGeoCodeApi yandexGeoCodeApi;
     private String apiKey;
-    private String format; //TODO добавить в strings format, sco
+    private String format;
+    private String sco;
 
-    public GeoCodingService(YandexGeoCodeApi yandexGeoCodeApi, String apiKey) {
+    public GeoCodingService(YandexGeoCodeApi yandexGeoCodeApi, String apiKey, String format, String sco) {
         this.yandexGeoCodeApi = yandexGeoCodeApi;
         this.apiKey = apiKey;
+        this.format = format;
+        this.sco = sco;
     }
 
     public Single<String> getAddress(LatLng latLnd) {
-        return yandexGeoCodeApi.getGeoCodePost(apiKey, "json", "latlong", latLnd.latitude + "," + latLnd.longitude)
+        return yandexGeoCodeApi.getGeoCodePost(apiKey, format,sco, latLnd.latitude + "," + latLnd.longitude)
                 .map(reverseGeoCoding -> reverseGeoCoding
                         .getResponse()
                         .getGeoObjectCollection()

@@ -13,6 +13,7 @@ import com.example.homework.di.modules.ContactsInteractorModule;
 import com.example.homework.di.modules.ContactsPresenterModule;
 import com.example.homework.di.modules.InfoInteractorModule;
 import com.example.homework.di.modules.InfoPresenterModule;
+import com.example.homework.di.modules.mapscreen.DirectionModule;
 import com.example.homework.di.modules.mapscreen.GeoCodingServiceModule;
 import com.example.homework.di.modules.mapscreen.MapContactProviderModule;
 import com.example.homework.di.modules.mapscreen.MapDatabaseModule;
@@ -81,7 +82,8 @@ public class MyApp extends Application {
                     new MapContactProviderModule(),
                     new MapRepositoryModule(),
                     new MapInteractorModule(),
-                    new MapDatabaseModule());
+                    new MapDatabaseModule(),
+                    new DirectionModule());
         return fragmentMapComponent;
     }
 

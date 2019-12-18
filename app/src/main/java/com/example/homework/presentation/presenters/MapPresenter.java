@@ -19,6 +19,7 @@ public class MapPresenter extends MvpPresenter<GMapView> {
     private CompositeDisposable compositeDisposable;
     private SchedulerManager schedulerManager;
     private String contactId;
+    private LatLng currentLatLng;
 
     @Inject
     public MapPresenter(MapInteractor mapInteractor, SchedulerManager schedulerManager, String contactId) {
@@ -46,10 +47,67 @@ public class MapPresenter extends MvpPresenter<GMapView> {
                 .subscribeOn(schedulerManager.ioThread())
                 .observeOn(schedulerManager.mainThread())
                 .subscribe(address -> {
+                            currentLatLng = coordination;
                             getViewState().addMarker(coordination, address);
                             setMapContact(contactId, coordination, address);
                         }
                         , __ -> getViewState().onError("Cant add address for this marker")));
+    }
+
+    public void addCurrentContactAddress() {
+        compositeDisposable.add(mapInteractor.getMapContact(contactId)
+                .subscribeOn(schedulerManager.ioThread())
+                .observeOn(schedulerManager.mainThread())
+                .subscribe(mapContact -> {
+                            currentLatLng = new LatLng(mapContact.getLat(), mapContact.getLng());
+                            getViewState().addCurrentAddressMarker(currentLatLng, mapContact.getAddress());
+                        }
+                        , __ -> getViewState().onError("Please, add an address")));
+    }
+
+    public void getAllMapContact() {
+        compositeDisposable.add(mapInteractor.getAllMapContact()
+                .subscribeOn(schedulerManager.ioThread())
+                .observeOn(schedulerManager.mainThread())
+                .subscribe(mapContacts -> getViewState().allMapContact(mapContacts)
+                        , __ -> getViewState().onError("Cant find your contacts"))
+        );
+    }
+
+    public boolean setDirection(LatLng direction) {
+        if (currentLatLng != null) {
+            compositeDisposable.add(mapInteractor.setDirection(currentLatLng, direction)
+                    .subscribeOn(schedulerManager.ioThread())
+                    .observeOn(schedulerManager.mainThread())
+                    .subscribe(polyline -> getViewState().setDirection(polyline),
+                            throwable -> {
+                                throwable.printStackTrace();
+                                getViewState().onError("Cant find polyline");
+                            }));
+            return true;
+        } else {
+            getViewState().onError("Please, sir, add an address");
+            return false;
+        }
+    }
+
+    public void startLocation() {
+        compositeDisposable.add(mapInteractor.getMapContact(contactId)
+                .subscribeOn(schedulerManager.ioThread())
+                .observeOn(schedulerManager.mainThread())
+                .subscribe(mapContact -> {
+                            currentLatLng = new LatLng(mapContact.getLat(), mapContact.getLng());
+                            getViewState().addMarker(currentLatLng, mapContact.getAddress());
+                        }
+                        , __ -> {
+                            getCurrentLocation();
+                            getViewState().onError("Please, match your location");
+                        }));
+
+    }
+
+    public RequestAccessLocation getRequestAccessLocation() {
+        return this.requestAccessLocation;
     }
 
     private void setMapContact(String id, LatLng latLng, String address) {
@@ -61,32 +119,14 @@ public class MapPresenter extends MvpPresenter<GMapView> {
         );
     }
 
-    public void addCurrentContactAddress() {
-        compositeDisposable.add(mapInteractor.getMapContact(contactId)
+    private void getCurrentLocation() {
+        compositeDisposable.add(mapInteractor.getCurrentLocation()
                 .subscribeOn(schedulerManager.ioThread())
                 .observeOn(schedulerManager.mainThread())
-                .subscribe(mapContact -> {
-                            getViewState().addCurrentAddressMarker(new LatLng(mapContact.getLat(), mapContact.getLng()), mapContact.getAddress());
-                        }
-                        , __ -> getViewState().onError("Please, add an address")));
-    }
+                .subscribe(coordination -> getViewState().currentLocation(coordination)
+                        , __ -> getViewState().onError("Cant find your location"))
+        );
 
-    public void startLocation() {
-        compositeDisposable.add(mapInteractor.getMapContact(contactId)
-                .subscribeOn(schedulerManager.ioThread())
-                .observeOn(schedulerManager.mainThread())
-                .subscribe(mapContact -> {
-                            getViewState().addMarker(new LatLng(mapContact.getLat(), mapContact.getLng()), mapContact.getAddress());
-                        }
-                        , __ -> {
-                            getViewState().currentLocation(mapInteractor.getCurrentLocation());
-                            getViewState().onError("Cant find your location");
-                        }));
-
-    }
-
-    public RequestAccessLocation getRequestAccessLocation() {
-        return this.requestAccessLocation;
     }
 
     @Override

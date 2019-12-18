@@ -10,13 +10,14 @@ import com.example.homework.di.modules.ContactsRepositoryModule;
 import com.example.homework.di.modules.ContentResolverModule;
 import com.example.homework.di.modules.InfoInteractorModule;
 import com.example.homework.di.modules.InfoPresenterModule;
+import com.example.homework.di.modules.NavigationModule;
+import com.example.homework.di.modules.SchedulersModule;
+import com.example.homework.di.modules.mapscreen.DirectionModule;
 import com.example.homework.di.modules.mapscreen.GeoCodingServiceModule;
 import com.example.homework.di.modules.mapscreen.MapContactProviderModule;
 import com.example.homework.di.modules.mapscreen.MapDatabaseModule;
 import com.example.homework.di.modules.mapscreen.MapInteractorModule;
 import com.example.homework.di.modules.mapscreen.MapPresenterModule;
-import com.example.homework.di.modules.NavigationModule;
-import com.example.homework.di.modules.SchedulersModule;
 import com.example.homework.di.modules.mapscreen.MapRepositoryModule;
 
 import javax.inject.Singleton;
@@ -36,10 +37,12 @@ public interface AppComponent {
 
     FragmentInfoComponent plusFragmentInfoComponent(InfoPresenterModule infoPresenterModule,
                                                     InfoInteractorModule infoInteractorModule);
+
     FragmentMapComponent plusFragmentMapComponent(MapPresenterModule mapPresenterModule,
                                                   GeoCodingServiceModule geoCodingServiceModule,
                                                   MapContactProviderModule mapContactProviderModule,
                                                   MapRepositoryModule mapRepositoryModule,
                                                   MapInteractorModule mapInteractorModule,
-                                                  MapDatabaseModule mapDatabaseModule);
+                                                  MapDatabaseModule mapDatabaseModule,
+                                                  DirectionModule directionModule);
 }

@@ -1,4 +1,4 @@
-package com.example.homework.retrofit;
+package com.example.homework.retrofitrequests.geocoding;
 
 import io.reactivex.Single;
 import retrofit2.http.GET;
@@ -10,5 +10,6 @@ public interface YandexGeoCodeApi {
             @Query("apikey") String apiKey
             , @Query("format") String format
             , @Query("sco") String sco
-            , @Query("geocode") String coordination);
+            , @Query("geocode") String coordination
+    );
 }
