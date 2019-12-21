@@ -1,11 +1,8 @@
 package com.example.homework.data.repository;
 
 import com.example.homework.data.provider.MapContactProvider;
-import com.example.homework.data.room.MapContact;
+import com.example.homework.domain.model.MapContactModel;
 import com.example.homework.domain.repository.MapRepository;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 
@@ -20,33 +17,33 @@ public class MapRepositoryImpl implements MapRepository {
     }
 
     @Override
-    public Single<MapContact> getMapContact(String id) {
+    public Single<MapContactModel> getMapContact(String id) {
         return mapContactProvider.getMapContact(id);
     }
 
     @Override
-    public Completable setMapContact(String id, LatLng coordination, String address) {
+    public Completable setMapContact(String id, String coordination, String address) {
         return mapContactProvider.addMapContact(id, coordination, address);
     }
 
     @Override
-    public Single<String> getAddress(LatLng coordination) {
+    public Single<String> getAddress(String coordination) {
         return mapContactProvider.getAddress(coordination);
     }
 
     @Override
-    public Single<List<MapContact>> getAllMapContact() {
+    public Single<List<MapContactModel>> getAllMapContact() {
         return mapContactProvider.getAllMapContact();
     }
 
     @Override
-    public Single<LatLng> getCurrentLocation() {
+    public Single<String> getCurrentLocation() {
         return mapContactProvider.getCurrentLocation();
     }
 
     @Override
-    public Single<PolylineOptions> getPolyline(LatLng origin, LatLng direction) {
-        return mapContactProvider.getPolyline(origin,direction);
+    public Single<List<String>> getPolyline(String origin, String direction) {
+        return mapContactProvider.getPolyline(origin, direction);
     }
 
 }

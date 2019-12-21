@@ -15,6 +15,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.example.homework.R;
 import com.example.homework.core.MyApp;
 import com.example.homework.data.room.MapContact;
+import com.example.homework.domain.model.MapContactModel;
 import com.example.homework.presentation.presenters.MapPresenter;
 import com.example.homework.presentation.views.GMapView;
 import com.example.homework.request.RequestPermissionFragment;
@@ -79,13 +80,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         view = inflater.inflate(R.layout.map_fragment, container, false);
         mapView = view.findViewById(R.id.map);
         if (savedInstanceState != null) {
-            lastCameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(savedInstanceState.getDouble("cameraLatitude"),
-                            savedInstanceState.getDouble("cameraLongitude")))
-                    .zoom(savedInstanceState.getFloat("cameraZoom"))
-                    .bearing(savedInstanceState.getFloat("cameraBearing"))
-                    .tilt(savedInstanceState.getFloat("cameraTilt"))
-                    .build();
+            lastCameraPosition = savedInstanceState.getParcelable("cameraPosition");
         }
         mapView.onCreate(savedInstanceState);
         contactsBtn = view.findViewById(R.id.contacts_btn);
@@ -96,11 +91,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (map != null) {
-            outState.putDouble("cameraLatitude", map.getCameraPosition().target.latitude);
-            outState.putDouble("cameraLongitude", map.getCameraPosition().target.longitude);
-            outState.putFloat("cameraBearing", map.getCameraPosition().bearing);
-            outState.putFloat("cameraTilt", map.getCameraPosition().tilt);
-            outState.putFloat("cameraZoom", map.getCameraPosition().zoom);
+            outState.putParcelable("cameraPosition", map.getCameraPosition());
         }
     }
 
@@ -170,7 +161,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
     }
 
     @Override
-    public void allMapContact(List<MapContact> mapContactList) {
+    public void allMapContact(List<MapContactModel> mapContactList) {
         LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
         allContactsMarkerList = new ArrayList<>();
         if (map != null) {

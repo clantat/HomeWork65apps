@@ -116,7 +116,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
 
     @Override
     public void setContacts(List<ShortContact> list) {
-        recyclerViewAdapter = new RecyclerViewAdapter(router);
+        recyclerViewAdapter = new RecyclerViewAdapter(router, Objects.requireNonNull(getArguments()).getInt(EXTRA_NUMBER));
         recyclerViewAdapter.setData(list);
         myRecyclerView.setAdapter(recyclerViewAdapter);
     }

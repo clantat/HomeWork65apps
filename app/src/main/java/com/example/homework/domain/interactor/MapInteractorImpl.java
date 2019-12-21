@@ -1,10 +1,7 @@
 package com.example.homework.domain.interactor;
 
-import com.example.homework.data.room.MapContact;
+import com.example.homework.domain.model.MapContactModel;
 import com.example.homework.domain.repository.MapRepository;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 
@@ -19,32 +16,32 @@ public class MapInteractorImpl implements MapInteractor {
     }
 
     @Override
-    public Single<MapContact> getMapContact(String id) {
+    public Single<MapContactModel> getMapContact(String id) {
         return mapRepository.getMapContact(id);
     }
 
     @Override
-    public Completable setMapContact(String id, LatLng coordination, String address) {
+    public Completable setMapContact(String id, String coordination, String address) {
         return mapRepository.setMapContact(id, coordination, address);
     }
 
     @Override
-    public Single<String> getAddress(LatLng coordination) {
+    public Single<String> getAddress(String coordination) {
         return mapRepository.getAddress(coordination);
     }
 
     @Override
-    public Single<List<MapContact>> getAllMapContact() {
+    public Single<List<MapContactModel>> getAllMapContact() {
         return mapRepository.getAllMapContact();
     }
 
     @Override
-    public Single<LatLng> getCurrentLocation() {
+    public Single<String> getCurrentLocation() {
         return mapRepository.getCurrentLocation();
     }
 
     @Override
-    public Single<PolylineOptions> setDirection(LatLng origin, LatLng direction) {
-        return mapRepository.getPolyline(origin,direction);
+    public Single<List<String>> setDirection(String origin, String direction) {
+        return mapRepository.getPolyline(origin, direction);
     }
 }

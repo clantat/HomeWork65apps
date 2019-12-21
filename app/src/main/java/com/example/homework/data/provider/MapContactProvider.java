@@ -1,8 +1,6 @@
 package com.example.homework.data.provider;
 
-import com.example.homework.data.room.MapContact;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.PolylineOptions;
+import com.example.homework.domain.model.MapContactModel;
 
 import java.util.List;
 
@@ -10,15 +8,15 @@ import io.reactivex.Completable;
 import io.reactivex.Single;
 
 public interface MapContactProvider {
-    Completable addMapContact(String id, LatLng coordination, String address);
+    Completable addMapContact(String id, String coordination, String address);
 
-    Single<MapContact> getMapContact(String id);
+    Single<MapContactModel> getMapContact(String id);
 
-    Single<String> getAddress(LatLng coordination);
+    Single<String> getAddress(String coordination);
 
-    Single<List<MapContact>> getAllMapContact();
+    Single<List<MapContactModel>> getAllMapContact();
 
-    Single<LatLng> getCurrentLocation();
+    Single<String> getCurrentLocation();
 
-    Single<PolylineOptions> getPolyline(LatLng origin, LatLng direction);
+    Single<List<String>> getPolyline(String origin, String direction);
 }

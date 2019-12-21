@@ -27,8 +27,11 @@ public class InfoPresenterModule {
 
     @ContactInfoScreenScope
     @Provides
-    InfoPresenter provideInfoPresenter(InfoInteractor infoInteractor, @Named("contact_id") String id, SchedulerManager schedulerManager, Router router) {
-        return new InfoPresenter(infoInteractor,id, schedulerManager, router);
+    InfoPresenter provideInfoPresenter(InfoInteractor infoInteractor, @Named("contact_id") String id
+            , SchedulerManager schedulerManager
+            , Router router
+            , @Named("screenId") int screenId) {
+        return new InfoPresenter(infoInteractor, id, schedulerManager, router, screenId);
     }
 
     @ContactInfoScreenScope
@@ -37,4 +40,12 @@ public class InfoPresenterModule {
     String provideContactId() {
         return Objects.requireNonNull(Objects.requireNonNull(fragmentContactInfo.getArguments()).getString("id"));
     }
+
+    @ContactInfoScreenScope
+    @Provides
+    @Named("screenId")
+    int provideScreenId() {
+        return Objects.requireNonNull(Objects.requireNonNull(fragmentContactInfo.getArguments()).getInt("extra_number"));
+    }
+
 }

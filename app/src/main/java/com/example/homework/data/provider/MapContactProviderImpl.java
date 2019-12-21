@@ -1,23 +1,26 @@
 package com.example.homework.data.provider;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.homework.data.room.MapContact;
 import com.example.homework.data.room.MapDatabase;
+import com.example.homework.domain.model.MapContactModel;
 import com.example.homework.retrofitrequests.direction.DirectionService;
 import com.example.homework.retrofitrequests.geocoding.GeoCodingService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import io.reactivex.Single;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class MapContactProviderImpl implements MapContactProvider {
 
@@ -28,7 +31,7 @@ public class MapContactProviderImpl implements MapContactProvider {
 
 
     @Inject
-    public MapContactProviderImpl(MapDatabase mapDatabase, GeoCodingService geoCodingService, Context context , DirectionService directionService) {
+    public MapContactProviderImpl(MapDatabase mapDatabase, GeoCodingService geoCodingService, Context context, DirectionService directionService) {
         this.mapDatabase = mapDatabase;
         this.geoCodingService = geoCodingService;
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
@@ -36,39 +39,63 @@ public class MapContactProviderImpl implements MapContactProvider {
     }
 
     @Override
-    public Completable addMapContact(String id, LatLng coordination, String address) {
-        return mapDatabase.mapContactDao().insertMapContact(new MapContact(id, coordination.latitude, coordination.longitude, address));
+    public Completable addMapContact(String id, String coordination, String address) {
+        LatLng coordinationLatLng = getLatLngFromString(coordination);
+        return mapDatabase.mapContactDao().insertMapContact(new MapContact(id, coordinationLatLng.latitude, coordinationLatLng.longitude, address));
     }
 
     @Override
-    public Single<MapContact> getMapContact(String id) {
-        return mapDatabase.mapContactDao().getMapContact(id);
+    public Single<MapContactModel> getMapContact(String id) {
+        return mapDatabase.mapContactDao().getMapContact(id)
+                .map(this::getModelFromMapContact);
     }
 
     @Override
-    public Single<String> getAddress(LatLng coordination) {
-        return geoCodingService.getAddress(coordination);
+    public Single<String> getAddress(String coordination) {
+        LatLng coordinationLatLng = getLatLngFromString(coordination);
+        return geoCodingService.getAddress(coordinationLatLng);
     }
 
     @Override
-    public Single<List<MapContact>> getAllMapContact() {
-        return mapDatabase.mapContactDao().getAllMapContact();
+    public Single<List<MapContactModel>> getAllMapContact() {
+        return mapDatabase.mapContactDao().getAllMapContact()
+                .map(mapContacts -> {
+                    List<MapContactModel> mcModelList = new ArrayList<>();
+                    for (int i = 0; i < mapContacts.size(); i++) {
+                        mcModelList.add(getModelFromMapContact(mapContacts.get(i)));
+                    }
+                    return mcModelList;
+                });
     }
 
     @Override
-    public Single<LatLng> getCurrentLocation() {
+    public Single<String> getCurrentLocation() {
         return Single.create(e ->
                 fusedLocationProviderClient.getLastLocation().addOnSuccessListener(location -> {
                     if (location != null) {
                         e.onSuccess(new LatLng(location.getLatitude(),
-                                location.getLongitude()));
+                                location.getLongitude()).toString());
                     } else
                         e.onError(new Throwable("Current location is null"));
                 }));
     }
 
     @Override
-    public Single<PolylineOptions> getPolyline(LatLng origin, LatLng direction) {
-        return directionService.getPolyline(origin,direction);
+    public Single<List<String>> getPolyline(String origin, String direction) {
+        LatLng originLatLng = getLatLngFromString(origin);
+        LatLng directionLatLng = getLatLngFromString(direction);
+        return directionService.getPolyline(originLatLng, directionLatLng);
+    }
+
+    private LatLng getLatLngFromString(String latLng) {
+        StringBuilder stringBuilder = new StringBuilder(latLng);
+        stringBuilder.delete(latLng.length()-1,latLng.length());
+        stringBuilder.delete(0,10);
+        String[] stringLatLng = stringBuilder.toString().split(",");
+        return new LatLng(Double.parseDouble(stringLatLng[0]), Double.parseDouble(stringLatLng[1]));
+    }
+
+    private MapContactModel getModelFromMapContact(MapContact mapContact) {
+        return new MapContactModel(mapContact.getId(), mapContact.getLat(), mapContact.getLng(), mapContact.getAddress());
     }
 }

@@ -7,6 +7,7 @@ import com.example.homework.presentation.views.GMapView;
 import com.example.homework.request.RequestAccessLocation;
 import com.example.homework.schedulers.SchedulerManager;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import javax.inject.Inject;
 
@@ -43,7 +44,7 @@ public class MapPresenter extends MvpPresenter<GMapView> {
     }
 
     public void clickOnMap(LatLng coordination) {
-        compositeDisposable.add(mapInteractor.getAddress(coordination)
+        compositeDisposable.add(mapInteractor.getAddress(coordination.toString())
                 .subscribeOn(schedulerManager.ioThread())
                 .observeOn(schedulerManager.mainThread())
                 .subscribe(address -> {
@@ -76,13 +77,19 @@ public class MapPresenter extends MvpPresenter<GMapView> {
 
     public boolean setDirection(LatLng direction) {
         if (currentLatLng != null) {
-            compositeDisposable.add(mapInteractor.setDirection(currentLatLng, direction)
+            compositeDisposable.add(mapInteractor.setDirection(currentLatLng.toString(), direction.toString())
                     .subscribeOn(schedulerManager.ioThread())
                     .observeOn(schedulerManager.mainThread())
-                    .subscribe(polyline -> getViewState().setDirection(polyline),
+                    .subscribe(polyline -> {
+                                PolylineOptions polylineOptions = new PolylineOptions();
+                                for (int i = 0; i < polyline.size(); i++) {
+                                    polylineOptions.add(getLatLngFromString(polyline.get(i)));
+                                }
+                                getViewState().setDirection(polylineOptions);
+                            },
                             throwable -> {
                                 throwable.printStackTrace();
-                                getViewState().onError("Cant find polyline");
+                                getViewState().onError("Cant find route");
                             }));
             return true;
         } else {
@@ -110,8 +117,16 @@ public class MapPresenter extends MvpPresenter<GMapView> {
         return this.requestAccessLocation;
     }
 
+    private LatLng getLatLngFromString(String latLng) {
+        StringBuilder stringBuilder = new StringBuilder(latLng);
+        stringBuilder.delete(latLng.length() - 1, latLng.length());
+        stringBuilder.delete(0, 10);
+        String[] stringLatLng = stringBuilder.toString().split(",");
+        return new LatLng(Double.parseDouble(stringLatLng[0]), Double.parseDouble(stringLatLng[1]));
+    }
+
     private void setMapContact(String id, LatLng latLng, String address) {
-        compositeDisposable.add(mapInteractor.setMapContact(id, latLng, address)
+        compositeDisposable.add(mapInteractor.setMapContact(id, latLng.toString(), address)
                 .subscribeOn(schedulerManager.ioThread())
                 .observeOn(schedulerManager.mainThread())
                 .subscribe(() -> getViewState().onError("Address added"),
@@ -123,7 +138,7 @@ public class MapPresenter extends MvpPresenter<GMapView> {
         compositeDisposable.add(mapInteractor.getCurrentLocation()
                 .subscribeOn(schedulerManager.ioThread())
                 .observeOn(schedulerManager.mainThread())
-                .subscribe(coordination -> getViewState().currentLocation(coordination)
+                .subscribe(coordination -> getViewState().currentLocation(getLatLngFromString(coordination))
                         , __ -> getViewState().onError("Cant find your location"))
         );
 

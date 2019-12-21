@@ -4,7 +4,7 @@ package com.example.homework.presentation.views;
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
-import com.example.homework.data.room.MapContact;
+import com.example.homework.domain.model.MapContactModel;
 import com.example.homework.request.RequestPermissionFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -25,7 +25,7 @@ public interface GMapView extends MvpView {
 
     void currentLocation(LatLng latLng);
 
-    void allMapContact(List<MapContact> coordinationList);
+    void allMapContact(List<MapContactModel> coordinationList);
 
     void setDirection(PolylineOptions polylineOptions);
 
