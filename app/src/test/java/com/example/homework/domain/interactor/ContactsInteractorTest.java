@@ -5,8 +5,10 @@ import com.example.homework.domain.repository.ContactsRepository;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,7 @@ import io.reactivex.observers.TestObserver;
 
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ContactsInteractorTest {
 
     private ContactsInteractor contactsInteractor;
@@ -24,7 +27,6 @@ public class ContactsInteractorTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
         contactsInteractor = new ContactsInteractorImpl(contactsRepository);
     }
 

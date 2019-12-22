@@ -132,6 +132,11 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     }
 
     @Override
+    public void onError(String msg) {
+        Toast.makeText(this.getContext(),msg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (contactsPresenter.getRequestReadContact().onRequestPermissionResult(requestCode, grantResults)) {

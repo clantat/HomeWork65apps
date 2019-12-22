@@ -48,7 +48,8 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
                 disposableSearch = contactsInteractor.getContacts(searchText)
                         .subscribeOn(schedulerManager.ioThread())
                         .observeOn(schedulerManager.mainThread())
-                        .subscribe(list -> getViewState().setContacts(list));
+                        .subscribe(list -> getViewState().setContacts(list)
+                                , __ -> getViewState().onError("Cant find contact with this name"));
             } else {
                 disposableSearch = contactsInteractor.getContacts("")
                         .subscribeOn(schedulerManager.ioThread())
@@ -56,9 +57,14 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
                         .doOnSubscribe(__ -> getViewState().showLoading())
                         .doOnSuccess(__ -> getViewState().hideLoading())
                         .doOnDispose(() -> getViewState().hideLoading())
-                        .subscribe(list -> getViewState().setContacts(list));
+                        .subscribe(list -> getViewState().setContacts(list)
+                                , __ -> getViewState().onError("Cant find contacts"));
+
             }
-        else getViewState().onRequestPermission(requestReadContact);
+        else {
+            getViewState().onError("Please, give read permission");
+            getViewState().onRequestPermission(requestReadContact);
+        }
     }
 
 

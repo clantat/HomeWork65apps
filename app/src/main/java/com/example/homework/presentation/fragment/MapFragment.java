@@ -14,7 +14,6 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.example.homework.R;
 import com.example.homework.core.MyApp;
-import com.example.homework.data.room.MapContact;
 import com.example.homework.domain.model.MapContactModel;
 import com.example.homework.presentation.presenters.MapPresenter;
 import com.example.homework.presentation.views.GMapView;
