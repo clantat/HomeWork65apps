@@ -9,7 +9,6 @@ import io.reactivex.Single;
 
 public class ContactsInteractorImpl implements ContactsInteractor {
     private final ContactsRepository contactsRepository;
-
     public ContactsInteractorImpl(ContactsRepository contactsRepository) {
         this.contactsRepository = contactsRepository;
     }

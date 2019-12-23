@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,12 +15,12 @@ import androidx.annotation.Nullable;
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
-import com.example.homework.domain.model.Contact;
-import com.example.homework.core.MyApp;
 import com.example.homework.R;
-import com.example.homework.request.RequestPermissionFragment;
+import com.example.homework.core.MyApp;
+import com.example.homework.domain.model.Contact;
 import com.example.homework.presentation.presenters.InfoPresenter;
 import com.example.homework.presentation.views.InfoView;
+import com.example.homework.request.RequestPermissionFragment;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -30,12 +31,12 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
     Provider<InfoPresenter> infoPresenterProvider;
     @InjectPresenter
     InfoPresenter infoPresenter;
-
     private View view;
     private TextView nameView;
     private TextView phoneView;
     private TextView emailView;
     private ImageView imageView;
+    private Button button;
 
     public FragmentContactInfo() {
     }
@@ -54,6 +55,8 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
         phoneView = view.findViewById(R.id.info_phone_id);
         emailView = view.findViewById(R.id.info_email_id);
         imageView = view.findViewById(R.id.info_image);
+        button = view.findViewById(R.id.map_btn);
+        button.setOnClickListener(__ -> infoPresenter.clickMapButton());
         return view;
     }
 
@@ -65,6 +68,7 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
         phoneView = null;
         emailView = null;
         imageView = null;
+        button = null;
     }
 
     @Override
@@ -81,7 +85,7 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
     public static FragmentContactInfo newInstance(String id, int number) {
         FragmentContactInfo myFragment = new FragmentContactInfo();
         Bundle bundle = new Bundle();
-        bundle.putInt(EXTRA_NUMBER,number);
+        bundle.putInt(EXTRA_NUMBER, number);
         bundle.putString("id", id);
         myFragment.setArguments(bundle);
         return myFragment;
@@ -110,4 +114,5 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
         else
             Toast.makeText(getActivity(), "Третьего шанса не будет", Toast.LENGTH_LONG).show();
     }
+
 }

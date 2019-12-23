@@ -6,6 +6,7 @@ import com.example.homework.domain.interactor.InfoInteractor;
 import com.example.homework.presentation.fragment.FragmentContactInfo;
 import com.example.homework.presentation.presenters.InfoPresenter;
 import com.example.homework.di.scopes.ContactInfoScreenScope;
+import com.example.homework.schedulers.SchedulerManager;
 
 import java.util.Objects;
 
@@ -13,6 +14,7 @@ import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
+import ru.terrakok.cicerone.Router;
 
 @Module
 public class InfoPresenterModule {
@@ -25,8 +27,11 @@ public class InfoPresenterModule {
 
     @ContactInfoScreenScope
     @Provides
-    InfoPresenter provideInfoPresenter(InfoInteractor infoInteractor, @Named("contact_id") String id) {
-        return new InfoPresenter(infoInteractor,id);
+    InfoPresenter provideInfoPresenter(InfoInteractor infoInteractor, @Named("contact_id") String id
+            , SchedulerManager schedulerManager
+            , Router router
+            , @Named("screenId") int screenId) {
+        return new InfoPresenter(infoInteractor, id, schedulerManager, router, screenId);
     }
 
     @ContactInfoScreenScope
@@ -35,4 +40,12 @@ public class InfoPresenterModule {
     String provideContactId() {
         return Objects.requireNonNull(Objects.requireNonNull(fragmentContactInfo.getArguments()).getString("id"));
     }
+
+    @ContactInfoScreenScope
+    @Provides
+    @Named("screenId")
+    int provideScreenId() {
+        return Objects.requireNonNull(Objects.requireNonNull(fragmentContactInfo.getArguments()).getInt("extra_number"));
+    }
+
 }

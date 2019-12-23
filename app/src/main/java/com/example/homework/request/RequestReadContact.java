@@ -7,8 +7,6 @@ import android.os.Build;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.homework.request.RequestPermissionFragment;
-
 import java.util.Objects;
 
 public class RequestReadContact implements RequestPermissionFragment {

@@ -7,7 +7,7 @@ public class Contact {
     private String Name;
     private String Phone;
     private String Email;
-    private Bitmap mBitmap;
+    private Bitmap mBitmap; //TODO переделать в массив byte[]
 
 
     public Contact(String id, String name, String phone, String email, Bitmap bitmap) {

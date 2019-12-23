@@ -22,13 +22,15 @@ import ru.terrakok.cicerone.Router;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     private Router router;
+    private final int screenId;
 
     private final AsyncListDiffer<ShortContact> asyncListDiffer =
             new AsyncListDiffer<>(this, DIFF_CALLBACK_SHORTCONTACT);
 
     @Inject
-    public RecyclerViewAdapter(Router router) {
+    public RecyclerViewAdapter(Router router, int screenId) {
         this.router = router;
+        this.screenId = screenId;
     }
 
     @NonNull
@@ -39,7 +41,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
         vHolder.getItem_contact().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                router.navigateTo(new Screens.ContactInfoScreen(2,
+                router.navigateTo(new Screens.ContactInfoScreen(screenId+1,
                         asyncListDiffer.getCurrentList().get(vHolder.getAdapterPosition()).getId()));
             }
         });

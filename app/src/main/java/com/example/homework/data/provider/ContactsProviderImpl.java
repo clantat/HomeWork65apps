@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
 
-import com.example.homework.data.provider.ContactsProvider;
 import com.example.homework.domain.model.Contact;
 import com.example.homework.domain.model.ShortContact;
 
@@ -25,7 +24,7 @@ public class ContactsProviderImpl implements ContactsProvider {
     private final ContentResolver contentResolver;
 
     @Inject
-    public ContactsProviderImpl(ContentResolver contentResolver){
+    public ContactsProviderImpl(ContentResolver contentResolver) {
         this.contentResolver = contentResolver;
     }
 

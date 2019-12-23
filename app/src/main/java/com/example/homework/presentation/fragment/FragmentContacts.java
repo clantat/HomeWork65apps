@@ -116,7 +116,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
 
     @Override
     public void setContacts(List<ShortContact> list) {
-        recyclerViewAdapter = new RecyclerViewAdapter(router);
+        recyclerViewAdapter = new RecyclerViewAdapter(router, Objects.requireNonNull(getArguments()).getInt(EXTRA_NUMBER));
         recyclerViewAdapter.setData(list);
         myRecyclerView.setAdapter(recyclerViewAdapter);
     }
@@ -129,6 +129,11 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     @Override
     public void hideLoading() {
         progressView.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onError(String msg) {
+        Toast.makeText(this.getContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
     @Override
