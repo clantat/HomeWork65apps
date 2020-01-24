@@ -17,13 +17,14 @@ android:
     - tools
     - build-tools-$ANDROID_BUILD_TOOLS
     - android-$ANDROID_API
-    - android-$EMULATOR_API_LEVEL
+    - android-$EMULATOR_API
     - extra-android-support
     - extra-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
-    - sys-img-$ANDROID_ABI-google_apis-$ANDROID_API_LEVEL
-    - sys-img-$ANDROID_ABI-google_apis-$EMULATOR_API_LEVEL
+    - addon-google_apis-google-$ANDROID_API
+    - sys-img-$ANDROID_ABI-addon-google_apis-$ANDROID_API
+    - sys-img-$ANDROID_ABI-addon-google_apis-$EMULATOR_API
 
 licenses:
   - android-sdk-preview-license-.+
