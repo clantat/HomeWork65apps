@@ -39,7 +39,7 @@ before_install:
 
 before_script:
   - android list targets
-  - echo no | android create avd --force -n test -t "android-"$EMULATOR_API --abi $ANDROID_ABI -c 32M
+  - echo no | android create avd --force -n test -t "android-"25 --abi $ANDROID_ABI
   - emulator -avd test -no-window &
   - android-wait-for-emulator
 
