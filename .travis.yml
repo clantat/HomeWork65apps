@@ -5,7 +5,7 @@ jdk: oraclejdk8
 env:
   global:
     - ANDROID_API=29
-    - EMULATOR_API=27
+    - EMULATOR_API=25
     - ANDROID_BUILD_TOOLS=29.0.1
     - ANDROID_ABI=armeabi-v7a
     - ANDROID_TAG=google_apis
@@ -39,13 +39,10 @@ before_install:
   - chmod +x gradlew
   - export ANDROID_HOME=/home/idact/Android/Sdk
   - ./gradlew dependencies || true
-  - android list sdk --extended --no-ui --all
-  - echo "y" | android update sdk -a --no-ui --filter sys-img-armeabi-v7a-android-29,sys-img-x86_64-android-29
-  - echo "n" | android create avd --name myandroid29 -t "android-29"
 
 before_script:
   - android list targets
-  - echo no | android create avd --force --name myandroid29 -t "android-"$ANDROID_API --abi "default/x86_64"
+  - echo no | android create avd --force -n test -t "android-"25 --abi $ANDROID_ABI
   - emulator -avd test -no-window &
   - android-wait-for-emulator
 
