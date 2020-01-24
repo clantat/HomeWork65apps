@@ -41,4 +41,7 @@ before_install:
   - ./gradlew dependencies || true
 
 script:
-  - ./gradle assembleDebug
+  - ./gradlew dependencyCheckAnalyze build
+  - adb shell input keyevent 82
+  - ./gradlew build checkstyle connectedCheck -PdisablePreDex
+  - ./gradlew connectedCheck -PdisablePreDex --stacktrace
