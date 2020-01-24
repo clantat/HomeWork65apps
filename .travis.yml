@@ -1,5 +1,5 @@
 language: android
-sudo: required
+sudo: false
 jdk: oraclejdk8
 
 env:
@@ -22,10 +22,11 @@ android:
     - addon-google_apis-google-19
     - sys-img-$ANDROID_ABI-addon-google_apis-google-$ANDROID_API_LEVEL
     - sys-img-$ANDROID_ABI-addon-google_apis-google-$EMULATOR_API_LEVEL
-  licenses:
-    - android-sdk-preview-license-.+
-    - android-sdk-license-.+
-    - google-gdk-license-.+
+
+licenses:
+  - android-sdk-preview-license-.+
+  - android-sdk-license-.+
+  - google-gdk-license-.+
 
 before_install:
   - mkdir "$ANDROID_HOME/licenses" || true # for constraint layout
@@ -34,5 +35,10 @@ before_install:
   - chmod +x gradlew
   - ./gradlew dependencies || true
 
+before_script:
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
+
 script:
-  -"./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
+  - ./gradlew dependencyCheckAnalyze build
+  - ./gradlew connectedCheck -PdisablePreDex --stacktrace
