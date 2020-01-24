@@ -40,14 +40,5 @@ before_install:
   - export ANDROID_HOME=/home/idact/Android/Sdk
   - ./gradlew dependencies || true
 
-before_script:
-  - android list targets
-  - echo no | android create avd --force -n test -t "android-"25 --abi $ANDROID_ABI --tag $ANDROID_TAG
-  - emulator -avd test -no-window &
-  - android-wait-for-emulator
-
 script:
-  - ./gradlew dependencyCheckAnalyze build
-  - adb shell input keyevent 82
-  - ./gradlew build checkstyle connectedCheck -PdisablePreDex
-  - ./gradlew connectedCheck -PdisablePreDex --stacktrace
+  - ./gradle assembleDebug
