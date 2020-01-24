@@ -39,10 +39,13 @@ before_install:
   - chmod +x gradlew
   - export ANDROID_HOME=/home/idact/Android/Sdk
   - ./gradlew dependencies || true
+  - android list sdk --extended --no-ui --all
+  - echo "y" | android update sdk -a --no-ui --filter sys-img-armeabi-v7a-android-29,sys-img-x86_64-android-29
+  - echo "n" | android create avd --name myandroid29 -t "android-29"
 
 before_script:
   - android list targets
-  - echo no | android create avd --force -n test -t "android-"$ANDROID_API --abi $ANDROID_ABI
+  - echo no | android create avd --name myandroid29 -t "android-"$ANDROID_API --abi $ANDROID_ABI
   - emulator -avd test -no-window &
   - android-wait-for-emulator
 
