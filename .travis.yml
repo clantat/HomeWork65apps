@@ -45,7 +45,7 @@ before_install:
 
 before_script:
   - android list targets
-  - echo no | android create avd --force --name myandroid29 -t "android-"$ANDROID_API --abi "default/armeabi-v7a"
+  - echo no | android create avd --force --name myandroid29 -t "android-"$ANDROID_API --abi "default/x86_64"
   - emulator -avd test -no-window &
   - android-wait-for-emulator
 
