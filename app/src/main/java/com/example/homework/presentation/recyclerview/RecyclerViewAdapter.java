@@ -22,15 +22,13 @@ import ru.terrakok.cicerone.Router;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     private Router router;
-    private final int screenId;
 
     private final AsyncListDiffer<ShortContact> asyncListDiffer =
             new AsyncListDiffer<>(this, DIFF_CALLBACK_SHORTCONTACT);
 
     @Inject
-    public RecyclerViewAdapter(Router router, int screenId) {
+    public RecyclerViewAdapter(Router router) {
         this.router = router;
-        this.screenId = screenId;
     }
 
     @NonNull
@@ -38,13 +36,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contact, parent, false);
         final ViewHolder vHolder = new ViewHolder(view);
-        vHolder.getItem_contact().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                router.navigateTo(new Screens.ContactInfoScreen(screenId+1,
-                        asyncListDiffer.getCurrentList().get(vHolder.getAdapterPosition()).getId()));
-            }
-        });
+        vHolder.getItem_contact().setOnClickListener(__-> router.navigateTo(new Screens.ContactInfoScreen(asyncListDiffer.getCurrentList().get(vHolder.getAdapterPosition()).getId())));
         return vHolder;
     }
 
@@ -64,7 +56,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
         asyncListDiffer.submitList(data);
     }
 
-    public static final DiffUtil.ItemCallback<ShortContact> DIFF_CALLBACK_SHORTCONTACT
+    private static final DiffUtil.ItemCallback<ShortContact> DIFF_CALLBACK_SHORTCONTACT
             = new DiffUtil.ItemCallback<ShortContact>() {
         @Override
         public boolean areItemsTheSame(

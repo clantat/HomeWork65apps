@@ -38,7 +38,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMapReadyCallback {
-    private static final String EXTRA_NUMBER = "extra_number";
 
     @Inject
     Provider<MapPresenter> mapPresenterProvider;
@@ -223,10 +222,9 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
             Toast.makeText(getActivity(), "Не ждите нас в гости", Toast.LENGTH_LONG).show();
     }
 
-    public static MapFragment newInstance(int number, String id) {
+    public static MapFragment newInstance(String id) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
-        args.putInt(EXTRA_NUMBER, number);
         args.putString("id", id);
         fragment.setArguments(args);
         return fragment;

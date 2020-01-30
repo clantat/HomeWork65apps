@@ -24,7 +24,6 @@ public class InfoPresenter extends MvpPresenter<InfoView> {
     private final InfoInteractor infoInteractor;
     private final SchedulerManager schedulerManager;
     private final Router router;
-    private final int screenId;
 
     @Override
     protected void onFirstViewAttach() {
@@ -38,12 +37,11 @@ public class InfoPresenter extends MvpPresenter<InfoView> {
 
     @Inject
     public InfoPresenter(@NonNull InfoInteractor infoInteractor, String id,
-                         SchedulerManager schedulerManager, Router router, int screenId) {
+                         SchedulerManager schedulerManager, Router router) {
         this.infoInteractor = infoInteractor;
         this.id = id;
         this.schedulerManager = schedulerManager;
         this.router = router;
-        this.screenId = screenId;
         requestReadContact = new RequestReadContact();
     }
 
@@ -54,7 +52,7 @@ public class InfoPresenter extends MvpPresenter<InfoView> {
                 .subscribe(item -> getViewState().showInfo(item));
     }
     public void clickMapButton(){
-        router.navigateTo(new Screens.MapScreen(screenId+1,id));
+        router.navigateTo(new Screens.MapScreen(id));
     }
     @Override
     public void onDestroy() {

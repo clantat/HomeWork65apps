@@ -1,8 +1,8 @@
 package com.example.homework.data.provider;
 
 import android.content.Context;
-import android.util.Log;
 
+import com.example.homework.exception.CurLocException;
 import com.example.homework.data.room.MapContact;
 import com.example.homework.data.room.MapDatabase;
 import com.example.homework.domain.model.MapContactModel;
@@ -19,8 +19,6 @@ import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import io.reactivex.Single;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class MapContactProviderImpl implements MapContactProvider {
 
@@ -76,7 +74,7 @@ public class MapContactProviderImpl implements MapContactProvider {
                         e.onSuccess(new LatLng(location.getLatitude(),
                                 location.getLongitude()).toString());
                     } else
-                        e.onError(new Throwable("Current location is null"));
+                        e.onError(new CurLocException("Current location is null"));
                 }));
     }
 

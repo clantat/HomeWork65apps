@@ -7,6 +7,7 @@ import com.example.homework.domain.repository.MapRepository;
 
 import dagger.Module;
 import dagger.Provides;
+
 @Module
 public class MapInteractorModule {
     @MapScreenScope
