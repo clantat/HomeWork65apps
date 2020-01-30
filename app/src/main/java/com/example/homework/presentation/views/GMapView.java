@@ -19,6 +19,8 @@ public interface GMapView extends MvpView {
 
     void addMarker(LatLng latLng, String title);
 
+    void startLocationPlace(LatLng latLng, String address);
+
     void mapAsync();
 
     void onError(String msg);

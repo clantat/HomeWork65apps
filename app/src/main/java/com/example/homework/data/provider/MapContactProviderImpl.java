@@ -22,6 +22,7 @@ import io.reactivex.Single;
 
 public class MapContactProviderImpl implements MapContactProvider {
 
+    private static final int LENGTH_OF_STRING_LATLNG_EXCESS = 10;
     private MapDatabase mapDatabase;
     private GeoCodingService geoCodingService;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -88,7 +89,7 @@ public class MapContactProviderImpl implements MapContactProvider {
     private LatLng getLatLngFromString(String latLng) {
         StringBuilder stringBuilder = new StringBuilder(latLng);
         stringBuilder.delete(latLng.length()-1,latLng.length());
-        stringBuilder.delete(0,10);
+        stringBuilder.delete(0,LENGTH_OF_STRING_LATLNG_EXCESS);
         String[] stringLatLng = stringBuilder.toString().split(",");
         return new LatLng(Double.parseDouble(stringLatLng[0]), Double.parseDouble(stringLatLng[1]));
     }

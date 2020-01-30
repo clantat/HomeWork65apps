@@ -22,6 +22,9 @@ public class MapPresenter extends MvpPresenter<GMapView> {
     private String contactId;
     private LatLng currentLatLng;
 
+    private static final double PADDING_WIDTH_COEFFICIENT = 0.20;
+    private static final float AVERAGE_CITY_ZOOM = 15;
+
     @Inject
     public MapPresenter(MapInteractor mapInteractor, SchedulerManager schedulerManager, String contactId) {
         compositeDisposable = new CompositeDisposable();
@@ -104,7 +107,7 @@ public class MapPresenter extends MvpPresenter<GMapView> {
                 .observeOn(schedulerManager.mainThread())
                 .subscribe(mapContact -> {
                             currentLatLng = new LatLng(mapContact.getLat(), mapContact.getLng());
-                            getViewState().addMarker(currentLatLng, mapContact.getAddress());
+                            getViewState().startLocationPlace(currentLatLng, mapContact.getAddress());
                         }
                         , __ -> {
                             getCurrentLocation();
@@ -142,6 +145,14 @@ public class MapPresenter extends MvpPresenter<GMapView> {
                         , __ -> getViewState().onError("Cant find your location"))
         );
 
+    }
+
+    public double getPaddingWidthCoefficient() {
+        return PADDING_WIDTH_COEFFICIENT;
+    }
+
+    public float getAverageCityZoom() {
+        return AVERAGE_CITY_ZOOM;
     }
 
     @Override

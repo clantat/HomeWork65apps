@@ -107,19 +107,29 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         contactsBtn.setOnClickListener(__ -> mapPresenter.getAllMapContact());
     }
 
+
     @Override
-    public void addCurrentAddressMarker(LatLng latLng, String address) {
-        if (map != null)
-            if (currentAddressMarker == null) {
-                currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Current address: " + address));
-                currentAddressMarker.showInfoWindow();
-            } else {
+    public void startLocationPlace(LatLng latLng, String address) {
+        if (map != null) {
+            if (currentAddressMarker != null)
                 currentAddressMarker.remove();
-                currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Current address: " + address));
-                currentAddressMarker.showInfoWindow();
-            }
+            currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Адрес контакта: " + address));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mapPresenter.getAverageCityZoom()));
+            currentAddressMarker.showInfoWindow();
+        }
     }
 
+    @Override
+    public void addCurrentAddressMarker(LatLng latLng, String address) {
+        if (map != null) {
+            if (currentAddressMarker != null)
+                currentAddressMarker.remove();
+            currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Адрес контакта: " + address));
+            currentAddressMarker.showInfoWindow();
+        }
+    }
+
+    //TODO убрать повторяющиеся маркеры
     @Override
     public void addMarker(LatLng latLng, String title) {
         if (map != null) {
@@ -135,8 +145,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
             coordinationMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title(title));
             if (currentAddressMarker != null)
                 currentAddressMarker.remove();
-            //TODO добавить галочку подтверждения
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mapPresenter.getAverageCityZoom() + 2));
         }
         if (coordinationMarker != null)
             coordinationMarker.showInfoWindow();
@@ -154,8 +163,10 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
 
     @Override
     public void currentLocation(LatLng latLng) {
-        if (map != null && latLng != null)
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
+        if (map != null && latLng != null) {
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mapPresenter.getAverageCityZoom()));
+        }
+
     }
 
     @Override
@@ -185,7 +196,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         LatLngBounds bounds = builder.build();
         int width = getResources().getDisplayMetrics().widthPixels;
         int height = getResources().getDisplayMetrics().heightPixels;
-        int padding = (int) (width * 0.20);
+        int padding = (int) (width * mapPresenter.getPaddingWidthCoefficient());
         return CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
     }
 
