@@ -32,13 +32,16 @@ public class    Screens {
 
     public static final class MapScreen extends SupportAppScreen {
         private final String id;
-        public MapScreen(String id) {
+        private final String name;
+        public MapScreen(String id, String name) {
             this.id = id;
+            this.name = name;
+
         }
 
         @Override
         public Fragment getFragment() {
-            return MapFragment.newInstance(id);
+            return MapFragment.newInstance(id, name);
         }
     }
 }

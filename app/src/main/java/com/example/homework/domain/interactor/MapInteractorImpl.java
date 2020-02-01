@@ -21,8 +21,8 @@ public class MapInteractorImpl implements MapInteractor {
     }
 
     @Override
-    public Completable setMapContact(String id, String coordination, String address) {
-        return mapRepository.setMapContact(id, coordination, address);
+    public Completable setMapContact(String id, String name, String coordination, String address) {
+        return mapRepository.setMapContact(id, name, coordination, address);
     }
 
     @Override

@@ -1,10 +1,12 @@
 package com.example.homework.presentation.fragment;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,6 +25,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -30,6 +33,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.ui.IconGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +52,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
     private GoogleMap map;
     private MapView mapView;
     private Marker coordinationMarker;
+    private String coordinationMarkerId;
     private Marker currentAddressMarker;
     private MarkerOptions markerOptions;
     private CameraPosition lastCameraPosition;
@@ -113,7 +118,8 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         if (map != null) {
             if (currentAddressMarker != null)
                 currentAddressMarker.remove();
-            currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Адрес контакта: " + address));
+            currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Contact address: " + address));
+            coordinationMarkerId = currentAddressMarker.getId();
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mapPresenter.getAverageCityZoom()));
             currentAddressMarker.showInfoWindow();
         }
@@ -124,12 +130,12 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         if (map != null) {
             if (currentAddressMarker != null)
                 currentAddressMarker.remove();
-            currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Адрес контакта: " + address));
+            currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Contact address: " + address));
+            coordinationMarkerId = currentAddressMarker.getId();
             currentAddressMarker.showInfoWindow();
         }
     }
 
-    //TODO убрать повторяющиеся маркеры
     @Override
     public void addMarker(LatLng latLng, String title) {
         if (map != null) {
@@ -143,6 +149,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
             if (coordinationMarker != null)
                 coordinationMarker.remove();
             coordinationMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title(title));
+            coordinationMarkerId = coordinationMarker.getId();
             if (currentAddressMarker != null)
                 currentAddressMarker.remove();
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mapPresenter.getAverageCityZoom() + 2));
@@ -179,14 +186,28 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
                 allContactsMarkerList.get(i).remove();
             }
             for (int i = 0; i < mapContactList.size(); i++) {
-                Marker allContactsMarker = map.addMarker(markerOptions.position(new LatLng(mapContactList.get(i).getLat(), mapContactList.get(i).getLng()))
-                        .title(mapContactList.get(i).getAddress()));
-                allContactsMarker.showInfoWindow();
+                TextView text = new TextView(getContext());
+                text.setTextColor(getResources().getColor(R.color.colorBlack));
+                text.setText(getResources().getText(R.string.build_route) + mapContactList.get(i).getName());
+                IconGenerator generator = new IconGenerator(getContext());
+                generator.setColor(getResources().getColor(R.color.colorLightBlue));
+                generator.setContentView(text);
+                Bitmap icon = generator.makeIcon();
+                LatLng pos = new LatLng(mapContactList.get(i).getLat(), mapContactList.get(i).getLng());
+                MarkerOptions tp = new MarkerOptions().position(pos).icon(BitmapDescriptorFactory.fromBitmap(icon));
+                Marker allContactsMarker = map.addMarker(tp);
                 allContactsMarkerList.add(allContactsMarker);
                 latLngBuilder.include(allContactsMarkerList.get(i).getPosition());
+                if (mapContactList.get(i).getId().equals(mapPresenter.getContactId())) {
+                    allContactsMarker.remove();
+                }
             }
             map.animateCamera(moveCameraWithBounds(latLngBuilder));
-            map.setOnMarkerClickListener(markerLatLng -> mapPresenter.setDirection(markerLatLng.getPosition()));
+            map.setOnMarkerClickListener(markerLatLng -> {
+                if (markerLatLng.getId().equals(coordinationMarkerId))
+                    return false;
+                return mapPresenter.setDirection(markerLatLng.getPosition());
+            });
             Toast.makeText(getActivity(), "Match a contact for direction", Toast.LENGTH_LONG).show();
         }
 
@@ -233,10 +254,11 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
             Toast.makeText(getActivity(), "Не ждите нас в гости", Toast.LENGTH_LONG).show();
     }
 
-    public static MapFragment newInstance(String id) {
+    public static MapFragment newInstance(String id, String name) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
         args.putString("id", id);
+        args.putString("name", name);
         fragment.setArguments(args);
         return fragment;
     }

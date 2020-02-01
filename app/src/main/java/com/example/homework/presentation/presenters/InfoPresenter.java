@@ -6,7 +6,6 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.example.homework.core.Screens;
 import com.example.homework.domain.interactor.InfoInteractor;
-import com.example.homework.presentation.fragment.MapFragment;
 import com.example.homework.presentation.views.InfoView;
 import com.example.homework.request.RequestReadContact;
 import com.example.homework.schedulers.SchedulerManager;
@@ -20,6 +19,7 @@ import ru.terrakok.cicerone.Router;
 public class InfoPresenter extends MvpPresenter<InfoView> {
     private Disposable disposable;
     private final String id;
+    private String name;
     private final RequestReadContact requestReadContact;
     private final InfoInteractor infoInteractor;
     private final SchedulerManager schedulerManager;
@@ -42,6 +42,7 @@ public class InfoPresenter extends MvpPresenter<InfoView> {
         this.id = id;
         this.schedulerManager = schedulerManager;
         this.router = router;
+        this.name = "Chosen contact";
         requestReadContact = new RequestReadContact();
     }
 
@@ -49,11 +50,16 @@ public class InfoPresenter extends MvpPresenter<InfoView> {
         disposable = infoInteractor.getInfoContact(id)
                 .subscribeOn(schedulerManager.ioThread())
                 .observeOn(schedulerManager.mainThread())
-                .subscribe(item -> getViewState().showInfo(item));
+                .subscribe(item -> {
+                    name = item.getName();
+                    getViewState().showInfo(item);
+                });
     }
-    public void clickMapButton(){
-        router.navigateTo(new Screens.MapScreen(id));
+
+    public void clickMapButton() {
+        router.navigateTo(new Screens.MapScreen(id, name));
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

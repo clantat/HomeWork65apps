@@ -38,9 +38,9 @@ public class MapContactProviderImpl implements MapContactProvider {
     }
 
     @Override
-    public Completable addMapContact(String id, String coordination, String address) {
+    public Completable addMapContact(String id, String name, String coordination, String address) {
         LatLng coordinationLatLng = getLatLngFromString(coordination);
-        return mapDatabase.mapContactDao().insertMapContact(new MapContact(id, coordinationLatLng.latitude, coordinationLatLng.longitude, address));
+        return mapDatabase.mapContactDao().insertMapContact(new MapContact(id, name, coordinationLatLng.latitude, coordinationLatLng.longitude, address));
     }
 
     @Override
@@ -95,6 +95,6 @@ public class MapContactProviderImpl implements MapContactProvider {
     }
 
     private MapContactModel getModelFromMapContact(MapContact mapContact) {
-        return new MapContactModel(mapContact.getId(), mapContact.getLat(), mapContact.getLng(), mapContact.getAddress());
+        return new MapContactModel(mapContact.getId(),mapContact.getName(),mapContact.getLat(), mapContact.getLng(), mapContact.getAddress());
     }
 }

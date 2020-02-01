@@ -2,7 +2,6 @@ package com.example.homework.di.modules.mapscreen;
 
 import androidx.annotation.NonNull;
 
-import com.example.homework.di.scopes.ContactInfoScreenScope;
 import com.example.homework.di.scopes.MapScreenScope;
 import com.example.homework.domain.interactor.MapInteractor;
 import com.example.homework.presentation.fragment.MapFragment;
@@ -27,8 +26,8 @@ public class MapPresenterModule {
 
     @Provides
     @MapScreenScope
-    MapPresenter provideMapPresenter(MapInteractor mapInteractor, SchedulerManager schedulerManager,@Named("contactId")String id){
-        return new MapPresenter(mapInteractor, schedulerManager, id);
+    MapPresenter provideMapPresenter(MapInteractor mapInteractor, SchedulerManager schedulerManager, @Named("contactId") String id, @Named("contactName") String name) {
+        return new MapPresenter(mapInteractor, schedulerManager, id, name);
     }
 
     @MapScreenScope
@@ -36,5 +35,12 @@ public class MapPresenterModule {
     @Named("contactId")
     String provideContactId() {
         return Objects.requireNonNull(Objects.requireNonNull(mapFragment.getArguments()).getString("id"));
+    }
+
+    @MapScreenScope
+    @Provides
+    @Named("contactName")
+    String provideContactName() {
+        return Objects.requireNonNull(Objects.requireNonNull(mapFragment.getArguments()).getString("name"));
     }
 }

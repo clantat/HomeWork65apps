@@ -22,8 +22,8 @@ public class MapRepositoryImpl implements MapRepository {
     }
 
     @Override
-    public Completable setMapContact(String id, String coordination, String address) {
-        return mapContactProvider.addMapContact(id, coordination, address);
+    public Completable setMapContact(String id, String name, String coordination, String address) {
+        return mapContactProvider.addMapContact(id, name, coordination, address);
     }
 
     @Override

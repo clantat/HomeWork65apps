@@ -10,7 +10,7 @@ import io.reactivex.Single;
 public interface MapInteractor {
     Single<MapContactModel> getMapContact(String id);
 
-    Completable setMapContact(String id, String latLng, String address);
+    Completable setMapContact(String id, String name, String latLng, String address);
 
     Single<String> getAddress(String coordination);
 

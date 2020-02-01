@@ -20,17 +20,19 @@ public class MapPresenter extends MvpPresenter<GMapView> {
     private CompositeDisposable compositeDisposable;
     private SchedulerManager schedulerManager;
     private String contactId;
+    private String contactName;
     private LatLng currentLatLng;
 
     private static final double PADDING_WIDTH_COEFFICIENT = 0.20;
     private static final float AVERAGE_CITY_ZOOM = 15;
 
     @Inject
-    public MapPresenter(MapInteractor mapInteractor, SchedulerManager schedulerManager, String contactId) {
+    public MapPresenter(MapInteractor mapInteractor, SchedulerManager schedulerManager, String contactId, String contactName) {
         compositeDisposable = new CompositeDisposable();
         this.mapInteractor = mapInteractor;
         this.schedulerManager = schedulerManager;
         this.contactId = contactId;
+        this.contactName = contactName;
         this.requestAccessLocation = new RequestAccessLocation();
     }
 
@@ -53,7 +55,7 @@ public class MapPresenter extends MvpPresenter<GMapView> {
                 .subscribe(address -> {
                             currentLatLng = coordination;
                             getViewState().addMarker(coordination, address);
-                            setMapContact(contactId, coordination, address);
+                            setMapContact(contactId, contactName, coordination, address);
                         }
                         , __ -> getViewState().onError("Cant add address for this marker")));
     }
@@ -128,8 +130,8 @@ public class MapPresenter extends MvpPresenter<GMapView> {
         return new LatLng(Double.parseDouble(stringLatLng[0]), Double.parseDouble(stringLatLng[1]));
     }
 
-    private void setMapContact(String id, LatLng latLng, String address) {
-        compositeDisposable.add(mapInteractor.setMapContact(id, latLng.toString(), address)
+    private void setMapContact(String id, String name, LatLng latLng, String address) {
+        compositeDisposable.add(mapInteractor.setMapContact(id, name, latLng.toString(), address)
                 .subscribeOn(schedulerManager.ioThread())
                 .observeOn(schedulerManager.mainThread())
                 .subscribe(() -> getViewState().onError("Address added"),
@@ -153,6 +155,10 @@ public class MapPresenter extends MvpPresenter<GMapView> {
 
     public float getAverageCityZoom() {
         return AVERAGE_CITY_ZOOM;
+    }
+
+    public String getContactId() {
+        return contactId;
     }
 
     @Override

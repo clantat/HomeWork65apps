@@ -16,7 +16,7 @@ public class MapDatabaseModule {
     @Provides
     @MapScreenScope
     public MapDatabase provideDataBase(Context context) {
-        return Room.databaseBuilder(context, MapDatabase.class, "database")
+        return Room.databaseBuilder(context, MapDatabase.class, "db")
                 .build();
     }
 
