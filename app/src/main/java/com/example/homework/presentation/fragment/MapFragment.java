@@ -104,6 +104,22 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(true);
         map.setOnMapClickListener(LatLng -> mapPresenter.clickOnMap(LatLng));
+        map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                mapPresenter.clickOnMap(marker.getPosition());
+            }
+        });
         if (lastCameraPosition != null) {
             mapPresenter.addCurrentContactAddress();
             map.moveCamera(CameraUpdateFactory.newCameraPosition(lastCameraPosition));
@@ -118,7 +134,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         if (map != null) {
             if (currentAddressMarker != null)
                 currentAddressMarker.remove();
-            currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Contact address: " + address));
+            currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(true).title("Contact address: " + address));
             coordinationMarkerId = currentAddressMarker.getId();
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mapPresenter.getAverageCityZoom()));
             currentAddressMarker.showInfoWindow();
@@ -130,7 +146,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         if (map != null) {
             if (currentAddressMarker != null)
                 currentAddressMarker.remove();
-            currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Contact address: " + address));
+            currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(true).title("Contact address: " + address));
             coordinationMarkerId = currentAddressMarker.getId();
             currentAddressMarker.showInfoWindow();
         }
@@ -148,7 +164,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
                 polyline.remove();
             if (coordinationMarker != null)
                 coordinationMarker.remove();
-            coordinationMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title(title));
+            coordinationMarker = map.addMarker(markerOptions.position(latLng).draggable(true).title(title));
             coordinationMarkerId = coordinationMarker.getId();
             if (currentAddressMarker != null)
                 currentAddressMarker.remove();
