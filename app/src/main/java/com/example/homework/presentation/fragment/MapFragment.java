@@ -58,6 +58,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
     private MarkerOptions markerOptions;
     private CameraPosition lastCameraPosition;
     private Button contactsBtn;
+    private Boolean contactsBtnFlag;
     private Polyline polyline;
     private List<Marker> allContactsMarkerList;
 
@@ -75,7 +76,9 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         MyApp.get().plusFragmentMapComponent(this).inject(this);
         super.onCreate(savedInstanceState);
         markerOptions = new MarkerOptions();
-
+        if (savedInstanceState != null) {
+            contactsBtnFlag = savedInstanceState.getBoolean("contactsBtnFlag");
+        }
     }
 
     @Override
@@ -99,6 +102,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         if (map != null) {
             outState.putParcelable("cameraPosition", map.getCameraPosition());
         }
+        outState.putBoolean("contactsBtnFlag", contactsBtnFlag);
     }
 
     @Override
@@ -128,10 +132,13 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
             map.moveCamera(CameraUpdateFactory.newCameraPosition(lastCameraPosition));
         } else
             mapPresenter.startLocation();
+        if (contactsBtnFlag == null)
+            contactsBtnFlag = true;
         contactsBtn.setOnClickListener(__ -> {
-            if (contactsBtn.getText().equals(getResources().getString(R.string.btn_all_contacts))) {
+            if (contactsBtnFlag) {
                 contactsBtn.setText(getResources().getString(R.string.btn_remove_contacts));
                 mapPresenter.getAllMapContact();
+                contactsBtnFlag = false;
             } else {
                 contactsBtn.setText(getResources().getString(R.string.btn_all_contacts));
                 for (int i = 0; i < allContactsMarkerList.size(); i++) {
@@ -139,9 +146,12 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
                     allContactsMarkerList.get(i).remove();
                     if (polyline != null)
                         polyline.remove();
-                    if (currentAddressMarker != null)
+                    if (currentAddressMarker != null) {
                         map.animateCamera(CameraUpdateFactory.newLatLng(currentAddressMarker.getPosition()));
+                        currentAddressMarker.showInfoWindow();
+                    }
                 }
+                contactsBtnFlag = true;
             }
 
         });
@@ -176,6 +186,10 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         if (map != null) {
             if (currentAddressMarker != null)
                 currentAddressMarker.remove();
+            if(!contactsBtnFlag){
+                mapPresenter.getAllMapContact();
+                contactsBtn.setText(getResources().getString(R.string.btn_remove_contacts));
+            }
             currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(true).title("Contact address: " + address));
             currentAddressMarkerId = currentAddressMarker.getId();
             currentAddressMarker.showInfoWindow();
@@ -200,7 +214,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
                 currentAddressMarker.remove();
             currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(true).title(title));
             currentAddressMarkerId = currentAddressMarker.getId();
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mapPresenter.getAverageCityZoom() + 2));
+            map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         }
         if (currentAddressMarker != null)
             currentAddressMarker.showInfoWindow();
