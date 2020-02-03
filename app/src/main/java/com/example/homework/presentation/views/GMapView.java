@@ -21,6 +21,8 @@ public interface GMapView extends MvpView {
 
     void startLocationPlace(LatLng latLng, String address);
 
+    void addLocationForNewAddress();
+
     void mapAsync();
 
     void onError(String msg);

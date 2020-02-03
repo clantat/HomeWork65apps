@@ -113,7 +113,8 @@ public class MapPresenter extends MvpPresenter<GMapView> {
                         }
                         , __ -> {
                             getCurrentLocation();
-                            getViewState().onError("Please, match your location");
+                            getViewState().addLocationForNewAddress();
+                            getViewState().onError("Please, click on the marker for mark a location");
                         }));
 
     }
