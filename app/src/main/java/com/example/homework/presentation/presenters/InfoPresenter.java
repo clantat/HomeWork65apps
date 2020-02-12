@@ -20,7 +20,7 @@ public class InfoPresenter extends MvpPresenter<InfoView> {
     private Disposable disposable;
     private final String id;
     private String name;
-    private final RequestReadContact requestReadContact;
+    private RequestReadContact requestReadContact;
     private final InfoInteractor infoInteractor;
     private final SchedulerManager schedulerManager;
     private final Router router;
@@ -47,13 +47,18 @@ public class InfoPresenter extends MvpPresenter<InfoView> {
     }
 
     public void init() {
-        disposable = infoInteractor.getInfoContact(id)
-                .subscribeOn(schedulerManager.ioThread())
-                .observeOn(schedulerManager.mainThread())
-                .subscribe(item -> {
-                    name = item.getName();
-                    getViewState().showInfo(item);
-                });
+        if (requestReadContact.getReadContactPermission())
+            disposable = infoInteractor.getInfoContact(id)
+                    .subscribeOn(schedulerManager.ioThread())
+                    .observeOn(schedulerManager.mainThread())
+                    .subscribe(item -> {
+                        name = item.getName();
+                        getViewState().showInfo(item);
+                    }, __ -> getViewState().onError("Cant get a contact info"));
+        else {
+            getViewState().onRequestPermission(requestReadContact);
+            getViewState().onError("Please, give read permission");
+        }
     }
 
     public void clickMapButton() {
@@ -66,5 +71,9 @@ public class InfoPresenter extends MvpPresenter<InfoView> {
         if (disposable != null) {
             disposable.dispose();
         }
+    }
+
+    void setRequestReadContact(RequestReadContact requestReadContact) {
+        this.requestReadContact = requestReadContact;
     }
 }

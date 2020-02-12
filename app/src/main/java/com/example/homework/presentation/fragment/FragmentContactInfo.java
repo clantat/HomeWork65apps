@@ -98,6 +98,11 @@ public class FragmentContactInfo extends MvpAppCompatFragment implements InfoVie
     }
 
     @Override
+    public void onError(String msg) {
+        Toast.makeText(this.getContext(),msg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onRequestPermission(RequestPermissionFragment requestPermissionFragment) {
         if (requestPermissionFragment.doRequestPermission(this)) {
             infoPresenter.init();

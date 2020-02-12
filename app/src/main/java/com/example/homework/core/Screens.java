@@ -36,7 +36,6 @@ public class    Screens {
         public MapScreen(String id, String name) {
             this.id = id;
             this.name = name;
-
         }
 
         @Override
