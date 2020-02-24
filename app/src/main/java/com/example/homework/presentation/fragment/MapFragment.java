@@ -174,9 +174,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
     public void addLocationForNewAddress() {
         locationImageView.setVisibility(View.VISIBLE);
         if (map != null) {
-            locationImageView.setOnClickListener(__ -> {
-                mapPresenter.clickOnMap(map.getCameraPosition().target);
-            });
+            locationImageView.setOnClickListener(__ -> mapPresenter.clickOnMap(map.getCameraPosition().target));
         }
 
     }
@@ -186,7 +184,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         if (map != null) {
             if (currentAddressMarker != null)
                 currentAddressMarker.remove();
-            if(!contactsBtnFlag){
+            if (!contactsBtnFlag) {
                 mapPresenter.getAllMapContact();
                 contactsBtn.setText(getResources().getString(R.string.btn_remove_contacts));
             }

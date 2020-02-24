@@ -38,7 +38,7 @@ public class ContactsPresenterTest {
     @Mock
     private RequestReadContact readContactsRequest;
     private TrampolineScheduler trampolineScheduler;
-
+    
     @Before
     public void setUp() {
         // Given
@@ -49,8 +49,7 @@ public class ContactsPresenterTest {
         shortContactList.add(new ShortContact("228", "Rob", "1488"));
         shortContactList.add(new ShortContact("322", "Robastick", "1488322"));
         shortContactList.add(new ShortContact("1488", "Noname", "88005553535"));
-
-
+        contactsPresenter = new ContactsPresenter(contactsInteractor, trampolineScheduler);
     }
 
     @Test
@@ -59,7 +58,6 @@ public class ContactsPresenterTest {
         when(readContactsRequest.getReadContactPermission()).thenReturn(true);
         // contactsProvider should return Single List ShortContact\
         when(contactsProvider.getContacts("")).thenReturn(Single.just(shortContactList));
-        contactsPresenter = new ContactsPresenter(contactsInteractor, trampolineScheduler);
         contactsPresenter.setRequestReadContact(readContactsRequest);
         contactsPresenter.attachView(contactsView);
         // When call getContacts with "" name
@@ -75,7 +73,6 @@ public class ContactsPresenterTest {
     public void shouldShowOnErrorWhenFalseReadPermission() {
         // readContactsRequest should return false Permission for our request contacts
         when(readContactsRequest.getReadContactPermission()).thenReturn(false);
-        contactsPresenter = new ContactsPresenter(contactsInteractor, trampolineScheduler);
         contactsPresenter.setRequestReadContact(readContactsRequest);
         contactsPresenter.attachView(contactsView);
         // When call getContacts with "" name

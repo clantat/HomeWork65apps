@@ -22,7 +22,7 @@ public class MapPresenter extends MvpPresenter<GMapView> {
     private String contactId;
     private String contactName;
     private LatLng currentLatLng;
-
+    private PolylineOptions polylineOptions;
     private static final double PADDING_WIDTH_COEFFICIENT = 0.20;
     private static final float AVERAGE_CITY_ZOOM = 15;
 
@@ -49,15 +49,19 @@ public class MapPresenter extends MvpPresenter<GMapView> {
     }
 
     public void clickOnMap(LatLng coordination) {
-        compositeDisposable.add(mapInteractor.getAddress(coordination.toString())
-                .subscribeOn(schedulerManager.ioThread())
-                .observeOn(schedulerManager.mainThread())
-                .subscribe(address -> {
-                            currentLatLng = coordination;
-                            getViewState().addMarker(coordination, address);
-                            setMapContact(contactId, contactName, coordination, address);
-                        }
-                        , __ -> getViewState().onError("Cant add address for this marker")));
+        if (requestAccessLocation.getLocationPermission()) {
+            compositeDisposable.add(mapInteractor.getAddress(coordination.toString())
+                    .subscribeOn(schedulerManager.ioThread())
+                    .observeOn(schedulerManager.mainThread())
+                    .subscribe(address -> {
+                                currentLatLng = coordination;
+                                getViewState().addMarker(coordination, address);
+                                setMapContact(contactId, contactName, coordination, address);
+                            }
+                            , __ -> getViewState().onError("Cant add address for this marker")));
+        } else {
+            getViewState().onRequestPermission(requestAccessLocation);
+        }
     }
 
     public void addCurrentContactAddress() {
@@ -86,7 +90,7 @@ public class MapPresenter extends MvpPresenter<GMapView> {
                     .subscribeOn(schedulerManager.ioThread())
                     .observeOn(schedulerManager.mainThread())
                     .subscribe(polyline -> {
-                                PolylineOptions polylineOptions = new PolylineOptions();
+                                polylineOptions = new PolylineOptions();
                                 for (int i = 0; i < polyline.size(); i++) {
                                     polylineOptions.add(getLatLngFromString(polyline.get(i)));
                                 }
@@ -104,23 +108,32 @@ public class MapPresenter extends MvpPresenter<GMapView> {
     }
 
     public void startLocation() {
-        compositeDisposable.add(mapInteractor.getMapContact(contactId)
-                .subscribeOn(schedulerManager.ioThread())
-                .observeOn(schedulerManager.mainThread())
-                .subscribe(mapContact -> {
-                            currentLatLng = new LatLng(mapContact.getLat(), mapContact.getLng());
-                            getViewState().startLocationPlace(currentLatLng, mapContact.getAddress());
-                        }
-                        , __ -> {
-                            getCurrentLocation();
-                            getViewState().addLocationForNewAddress();
-                            getViewState().onError("Please, click on the marker for mark a location");
-                        }));
+        if (requestAccessLocation.getLocationPermission())
+            compositeDisposable.add(mapInteractor.getMapContact(contactId)
+                    .subscribeOn(schedulerManager.ioThread())
+                    .observeOn(schedulerManager.mainThread())
+                    .subscribe(mapContact -> {
+                                currentLatLng = new LatLng(mapContact.getLat(), mapContact.getLng());
+                                getViewState().startLocationPlace(currentLatLng, mapContact.getAddress());
+                            }
+                            , __ -> {
+                                getCurrentLocation();
+                                getViewState().addLocationForNewAddress();
+                                getViewState().onError("Please, click on the marker for mark a location");
+                            }));
+        else {
+            getViewState().onError("Please, give your permission");
+            getViewState().onRequestPermission(requestAccessLocation);
+        }
 
     }
 
     public RequestAccessLocation getRequestAccessLocation() {
         return this.requestAccessLocation;
+    }
+
+    void setRequestAccessLocation(RequestAccessLocation requestAccessLocation) {
+        this.requestAccessLocation = requestAccessLocation;
     }
 
     private LatLng getLatLngFromString(String latLng) {
@@ -150,6 +163,10 @@ public class MapPresenter extends MvpPresenter<GMapView> {
 
     }
 
+    PolylineOptions getPolylineOptions() {
+        return polylineOptions;
+    }
+
     public double getPaddingWidthCoefficient() {
         return PADDING_WIDTH_COEFFICIENT;
     }
@@ -160,6 +177,10 @@ public class MapPresenter extends MvpPresenter<GMapView> {
 
     public String getContactId() {
         return contactId;
+    }
+
+    void setCurrentLatLng(LatLng latLng){
+        this.currentLatLng = latLng;
     }
 
     @Override
