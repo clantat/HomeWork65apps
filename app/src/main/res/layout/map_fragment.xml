@@ -12,12 +12,19 @@
         android:layout_height="match_parent"/>
     <Button
         android:id="@+id/contacts_btn"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:textSize="10dp"
-        android:text="All contacts"
+        android:text="@string/btn_all_contacts"
         />
+    <ImageView
+        android:id="@+id/location_icon_red"
+        android:layout_width="50dp"
+        android:layout_height="60dp"
+        android:paddingBottom="13dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_location_red"/>
 
 </RelativeLayout>

@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
             if (savedInstanceState != null) {
                 return;
             }
-            router.newRootScreen(new Screens.ContactsScreen(1));
+            router.newRootScreen(new Screens.ContactsScreen());
         }
     }
 

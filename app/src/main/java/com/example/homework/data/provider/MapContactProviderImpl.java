@@ -1,8 +1,8 @@
 package com.example.homework.data.provider;
 
 import android.content.Context;
-import android.util.Log;
 
+import com.example.homework.exception.CurLocException;
 import com.example.homework.data.room.MapContact;
 import com.example.homework.data.room.MapDatabase;
 import com.example.homework.domain.model.MapContactModel;
@@ -20,10 +20,9 @@ import javax.inject.Inject;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 
-import static androidx.constraintlayout.widget.Constraints.TAG;
-
 public class MapContactProviderImpl implements MapContactProvider {
 
+    private static final int LENGTH_OF_STRING_LATLNG_EXCESS = 10;
     private MapDatabase mapDatabase;
     private GeoCodingService geoCodingService;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -39,9 +38,9 @@ public class MapContactProviderImpl implements MapContactProvider {
     }
 
     @Override
-    public Completable addMapContact(String id, String coordination, String address) {
+    public Completable addMapContact(String id, String name, String coordination, String address) {
         LatLng coordinationLatLng = getLatLngFromString(coordination);
-        return mapDatabase.mapContactDao().insertMapContact(new MapContact(id, coordinationLatLng.latitude, coordinationLatLng.longitude, address));
+        return mapDatabase.mapContactDao().insertMapContact(new MapContact(id, name, coordinationLatLng.latitude, coordinationLatLng.longitude, address));
     }
 
     @Override
@@ -76,7 +75,7 @@ public class MapContactProviderImpl implements MapContactProvider {
                         e.onSuccess(new LatLng(location.getLatitude(),
                                 location.getLongitude()).toString());
                     } else
-                        e.onError(new Throwable("Current location is null"));
+                        e.onError(new CurLocException("Current location is null"));
                 }));
     }
 
@@ -90,12 +89,12 @@ public class MapContactProviderImpl implements MapContactProvider {
     private LatLng getLatLngFromString(String latLng) {
         StringBuilder stringBuilder = new StringBuilder(latLng);
         stringBuilder.delete(latLng.length()-1,latLng.length());
-        stringBuilder.delete(0,10);
+        stringBuilder.delete(0,LENGTH_OF_STRING_LATLNG_EXCESS);
         String[] stringLatLng = stringBuilder.toString().split(",");
         return new LatLng(Double.parseDouble(stringLatLng[0]), Double.parseDouble(stringLatLng[1]));
     }
 
     private MapContactModel getModelFromMapContact(MapContact mapContact) {
-        return new MapContactModel(mapContact.getId(), mapContact.getLat(), mapContact.getLng(), mapContact.getAddress());
+        return new MapContactModel(mapContact.getId(),mapContact.getName(),mapContact.getLat(), mapContact.getLng(), mapContact.getAddress());
     }
 }

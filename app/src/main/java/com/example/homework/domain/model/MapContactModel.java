@@ -3,12 +3,14 @@ package com.example.homework.domain.model;
 public class MapContactModel {
 
     private String id;
+    private String name;
     private double lat;
     private double lng;
     private String address;
 
-    public MapContactModel(String id, double lat, double lng, String address) {
+    public MapContactModel(String id, String name, double lat, double lng, String address) {
         this.id = id;
+        this.name = name;
         this.lat = lat;
         this.lng = lng;
         this.address = address;
@@ -21,6 +23,14 @@ public class MapContactModel {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getLat() {

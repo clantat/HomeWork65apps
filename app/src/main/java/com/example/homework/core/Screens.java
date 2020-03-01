@@ -8,46 +8,39 @@ import com.example.homework.presentation.fragment.MapFragment;
 
 import ru.terrakok.cicerone.android.support.SupportAppScreen;
 
-public class Screens {
+public class    Screens {
     public static final class ContactsScreen extends SupportAppScreen {
-        private final int number;
-
-        public ContactsScreen(int number) {
-            this.number = number;
-        }
 
         @Override
         public Fragment getFragment() {
-            return FragmentContacts.getNewInstance(number);
+            return FragmentContacts.getNewInstance();
         }
     }
 
     public static final class ContactInfoScreen extends SupportAppScreen {
-        private final int number;
         private final String id;
 
-        public ContactInfoScreen(int number, String id) {
-            this.number = number;
+        public ContactInfoScreen(String id) {
             this.id = id;
         }
 
         @Override
         public Fragment getFragment() {
-            return FragmentContactInfo.newInstance(id, number);
+            return FragmentContactInfo.newInstance(id);
         }
     }
 
     public static final class MapScreen extends SupportAppScreen {
-        private final int number;
         private final String id;
-        public MapScreen(int number, String id) {
-            this.number = number;
+        private final String name;
+        public MapScreen(String id, String name) {
             this.id = id;
+            this.name = name;
         }
 
         @Override
         public Fragment getFragment() {
-            return MapFragment.newInstance(number,id);
+            return MapFragment.newInstance(id, name);
         }
     }
 }

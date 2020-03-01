@@ -1,10 +1,13 @@
 package com.example.homework.presentation.fragment;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,6 +26,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -30,6 +34,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.ui.IconGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +43,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMapReadyCallback {
-    private static final String EXTRA_NUMBER = "extra_number";
 
     @Inject
     Provider<MapPresenter> mapPresenterProvider;
@@ -46,13 +50,15 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
     MapPresenter mapPresenter;
 
     private View view;
+    private ImageView locationImageView;
     private GoogleMap map;
     private MapView mapView;
-    private Marker coordinationMarker;
+    private String currentAddressMarkerId;
     private Marker currentAddressMarker;
     private MarkerOptions markerOptions;
     private CameraPosition lastCameraPosition;
     private Button contactsBtn;
+    private Boolean contactsBtnFlag;
     private Polyline polyline;
     private List<Marker> allContactsMarkerList;
 
@@ -70,7 +76,9 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         MyApp.get().plusFragmentMapComponent(this).inject(this);
         super.onCreate(savedInstanceState);
         markerOptions = new MarkerOptions();
-
+        if (savedInstanceState != null) {
+            contactsBtnFlag = savedInstanceState.getBoolean("contactsBtnFlag");
+        }
     }
 
     @Override
@@ -82,6 +90,8 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
             lastCameraPosition = savedInstanceState.getParcelable("cameraPosition");
         }
         mapView.onCreate(savedInstanceState);
+        locationImageView = view.findViewById(R.id.location_icon_red);
+        locationImageView.setVisibility(View.GONE);
         contactsBtn = view.findViewById(R.id.contacts_btn);
         return view;
     }
@@ -92,6 +102,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         if (map != null) {
             outState.putParcelable("cameraPosition", map.getCameraPosition());
         }
+        outState.putBoolean("contactsBtnFlag", contactsBtnFlag);
     }
 
     @Override
@@ -100,30 +111,96 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(true);
         map.setOnMapClickListener(LatLng -> mapPresenter.clickOnMap(LatLng));
+        map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                mapPresenter.clickOnMap(marker.getPosition());
+            }
+        });
         if (lastCameraPosition != null) {
             mapPresenter.addCurrentContactAddress();
             map.moveCamera(CameraUpdateFactory.newCameraPosition(lastCameraPosition));
         } else
             mapPresenter.startLocation();
-        contactsBtn.setOnClickListener(__ -> mapPresenter.getAllMapContact());
+        if (contactsBtnFlag == null)
+            contactsBtnFlag = true;
+        contactsBtn.setOnClickListener(__ -> {
+            if (contactsBtnFlag) {
+                contactsBtn.setText(getResources().getString(R.string.btn_remove_contacts));
+                mapPresenter.getAllMapContact();
+                contactsBtnFlag = false;
+            } else {
+                contactsBtn.setText(getResources().getString(R.string.btn_all_contacts));
+                for (int i = 0; i < allContactsMarkerList.size(); i++) {
+                    allContactsMarkerList.get(i).setVisible(false);
+                    allContactsMarkerList.get(i).remove();
+                    if (polyline != null)
+                        polyline.remove();
+                    if (currentAddressMarker != null) {
+                        map.animateCamera(CameraUpdateFactory.newLatLng(currentAddressMarker.getPosition()));
+                        currentAddressMarker.showInfoWindow();
+                    }
+                }
+                contactsBtnFlag = true;
+            }
+
+        });
+    }
+
+
+    @Override
+    public void startLocationPlace(LatLng latLng, String address) {
+        if (map != null) {
+            if (currentAddressMarker != null)
+                currentAddressMarker.remove();
+            currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(true).title("Contact address: " + address));
+            currentAddressMarkerId = currentAddressMarker.getId();
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mapPresenter.getAverageCityZoom()));
+            currentAddressMarker.showInfoWindow();
+        }
+    }
+
+    @Override
+    public void addLocationForNewAddress() {
+        locationImageView.setVisibility(View.VISIBLE);
+        if (map != null) {
+            locationImageView.setOnClickListener(__ -> mapPresenter.clickOnMap(map.getCameraPosition().target));
+        }
+
     }
 
     @Override
     public void addCurrentAddressMarker(LatLng latLng, String address) {
-        if (map != null)
-            if (currentAddressMarker == null) {
-                currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Current address: " + address));
-                currentAddressMarker.showInfoWindow();
-            } else {
+        if (map != null) {
+            if (currentAddressMarker != null)
                 currentAddressMarker.remove();
-                currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title("Current address: " + address));
-                currentAddressMarker.showInfoWindow();
+            if (!contactsBtnFlag) {
+                mapPresenter.getAllMapContact();
+                contactsBtn.setText(getResources().getString(R.string.btn_remove_contacts));
             }
+            currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(true).title("Contact address: " + address));
+            currentAddressMarkerId = currentAddressMarker.getId();
+            currentAddressMarker.showInfoWindow();
+        }
     }
 
     @Override
     public void addMarker(LatLng latLng, String title) {
         if (map != null) {
+            if (locationImageView.isEnabled()) {
+                locationImageView.setVisibility(View.GONE);
+                locationImageView.setEnabled(false);
+            }
             if (allContactsMarkerList != null)
                 for (int i = 0; i < allContactsMarkerList.size(); i++) {
                     allContactsMarkerList.get(i).setVisible(false);
@@ -131,16 +208,14 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
                 }
             if (polyline != null)
                 polyline.remove();
-            if (coordinationMarker != null)
-                coordinationMarker.remove();
-            coordinationMarker = map.addMarker(markerOptions.position(latLng).draggable(false).title(title));
             if (currentAddressMarker != null)
                 currentAddressMarker.remove();
-            //TODO добавить галочку подтверждения
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+            currentAddressMarker = map.addMarker(markerOptions.position(latLng).draggable(true).title(title));
+            currentAddressMarkerId = currentAddressMarker.getId();
+            map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         }
-        if (coordinationMarker != null)
-            coordinationMarker.showInfoWindow();
+        if (currentAddressMarker != null)
+            currentAddressMarker.showInfoWindow();
     }
 
     @Override
@@ -155,8 +230,10 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
 
     @Override
     public void currentLocation(LatLng latLng) {
-        if (map != null && latLng != null)
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
+        if (map != null && latLng != null) {
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mapPresenter.getAverageCityZoom()));
+        }
+
     }
 
     @Override
@@ -169,14 +246,28 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
                 allContactsMarkerList.get(i).remove();
             }
             for (int i = 0; i < mapContactList.size(); i++) {
-                Marker allContactsMarker = map.addMarker(markerOptions.position(new LatLng(mapContactList.get(i).getLat(), mapContactList.get(i).getLng()))
-                        .title(mapContactList.get(i).getAddress()));
-                allContactsMarker.showInfoWindow();
+                TextView text = new TextView(getContext());
+                text.setTextColor(getResources().getColor(R.color.colorBlack));
+                text.setText(getResources().getText(R.string.build_route) + mapContactList.get(i).getName());
+                IconGenerator generator = new IconGenerator(getContext());
+                generator.setColor(getResources().getColor(R.color.colorLightBlue));
+                generator.setContentView(text);
+                Bitmap icon = generator.makeIcon();
+                LatLng pos = new LatLng(mapContactList.get(i).getLat(), mapContactList.get(i).getLng());
+                MarkerOptions tp = new MarkerOptions().position(pos).icon(BitmapDescriptorFactory.fromBitmap(icon));
+                Marker allContactsMarker = map.addMarker(tp);
                 allContactsMarkerList.add(allContactsMarker);
                 latLngBuilder.include(allContactsMarkerList.get(i).getPosition());
+                if (mapContactList.get(i).getId().equals(mapPresenter.getContactId())) {
+                    allContactsMarker.remove();
+                }
             }
             map.animateCamera(moveCameraWithBounds(latLngBuilder));
-            map.setOnMarkerClickListener(markerLatLng -> mapPresenter.setDirection(markerLatLng.getPosition()));
+            map.setOnMarkerClickListener(markerLatLng -> {
+                if (markerLatLng.getId().equals(currentAddressMarkerId))
+                    return false;
+                return mapPresenter.setDirection(markerLatLng.getPosition());
+            });
             Toast.makeText(getActivity(), "Match a contact for direction", Toast.LENGTH_LONG).show();
         }
 
@@ -186,7 +277,7 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
         LatLngBounds bounds = builder.build();
         int width = getResources().getDisplayMetrics().widthPixels;
         int height = getResources().getDisplayMetrics().heightPixels;
-        int padding = (int) (width * 0.20);
+        int padding = (int) (width * mapPresenter.getPaddingWidthCoefficient());
         return CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
     }
 
@@ -223,11 +314,11 @@ public class MapFragment extends MvpAppCompatFragment implements GMapView, OnMap
             Toast.makeText(getActivity(), "Не ждите нас в гости", Toast.LENGTH_LONG).show();
     }
 
-    public static MapFragment newInstance(int number, String id) {
+    public static MapFragment newInstance(String id, String name) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
-        args.putInt(EXTRA_NUMBER, number);
         args.putString("id", id);
+        args.putString("name", name);
         fragment.setArguments(args);
         return fragment;
     }

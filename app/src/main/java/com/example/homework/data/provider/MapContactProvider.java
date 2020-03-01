@@ -8,7 +8,7 @@ import io.reactivex.Completable;
 import io.reactivex.Single;
 
 public interface MapContactProvider {
-    Completable addMapContact(String id, String coordination, String address);
+    Completable addMapContact(String id, String name, String coordination, String address);
 
     Single<MapContactModel> getMapContact(String id);
 
@@ -19,4 +19,5 @@ public interface MapContactProvider {
     Single<String> getCurrentLocation();
 
     Single<List<String>> getPolyline(String origin, String direction);
+
 }

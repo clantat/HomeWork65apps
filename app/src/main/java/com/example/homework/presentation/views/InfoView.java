@@ -11,4 +11,6 @@ public interface InfoView extends MvpView {
     void onRequestPermission(RequestPermissionFragment requestPermissionFragment);
 
     void showInfo(Contact contact);
+
+    void onError(String msg);
 }

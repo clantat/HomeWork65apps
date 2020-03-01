@@ -42,7 +42,6 @@ import ru.terrakok.cicerone.Router;
 
 
 public class FragmentContacts extends MvpAppCompatFragment implements ContactsView {
-    private static final String EXTRA_NUMBER = "extra_number";
     @Inject
     Provider<ContactsPresenter> presenterProvider;
     @Inject
@@ -60,10 +59,9 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
     public FragmentContacts() {
     }
 
-    public static Fragment getNewInstance(int number) {
+    public static Fragment getNewInstance() {
         FragmentContacts fragmentContacts = new FragmentContacts();
         Bundle args = new Bundle();
-        args.putInt(EXTRA_NUMBER,number);
         fragmentContacts.setArguments(args);
         return fragmentContacts;
     }
@@ -116,7 +114,7 @@ public class FragmentContacts extends MvpAppCompatFragment implements ContactsVi
 
     @Override
     public void setContacts(List<ShortContact> list) {
-        recyclerViewAdapter = new RecyclerViewAdapter(router, Objects.requireNonNull(getArguments()).getInt(EXTRA_NUMBER));
+        recyclerViewAdapter = new RecyclerViewAdapter(router);
         recyclerViewAdapter.setData(list);
         myRecyclerView.setAdapter(recyclerViewAdapter);
     }
